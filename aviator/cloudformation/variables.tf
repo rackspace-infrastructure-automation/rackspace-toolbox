@@ -3,6 +3,6 @@ variable "key_name" {
 }
 
 variable "tag_foo" {
-  type = "string"
+  type    = "string"
   default = "bar"
 }
