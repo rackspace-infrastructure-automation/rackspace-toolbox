@@ -1,0 +1,21 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: hashicorp/terraform:0.11.5
+    steps:
+      - checkout
+      - run:
+          name: lint
+          command: ./repository_templates/scripts/lint.sh
+      - run:
+          name: validate
+          command: ./repository_templates/scripts/validate.sh
+
+      # future testing of actual templates
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test
