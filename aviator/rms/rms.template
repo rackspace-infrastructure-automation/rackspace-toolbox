@@ -1,0 +1,1760 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "rms.template - RMS 2.1 Deployment",
+  "Metadata": {
+    "AWS::CloudFormation::Interface": {
+      "ParameterGroups": [
+        {
+          "Parameters": [
+            "Subnets",
+            "VPCID",
+            "AvailabilityZoneCount",
+            "VPCCIDR",
+            "DisableApiTermination"
+          ],
+          "Label": {
+            "default": "VPC Config Options"
+          }
+        },
+        {
+          "Parameters": [
+            "ThreatManagerVolumeSize",
+            "ThreatManagerInstanceType",
+            "KeyName",
+            "ThreatManagerBuildState"
+          ],
+          "Label": {
+            "default": "Alert Logic Device Creation"
+          }
+        }
+      ],
+      "ParameterLabels": {
+        "Subnets": {
+          "default": "Choose: Subnets for Threat Manager Deployment"
+        },
+        "VPCID": {
+          "default": "Choose: Existing VPC"
+        },
+        "ThreatManagerInstanceType": {
+          "default": "Instance Type Selection"
+        },
+        "VPCCIDR": {
+          "default": "Choose: Existing CIDR Range"
+        },
+        "ThreatManagerVolumeSize": {
+          "default": "Instance Volume Size"
+        },
+        "KeyName": {
+          "default": "SSH Key ID"
+        },
+        "AvailabilityZoneCount": {
+          "default": "Availability Zones / Subnets"
+        },
+        "ThreatManagerBuildState": {
+          "default": "Build state selection"
+        }
+      }
+    }
+  },
+  "Parameters": {
+    "Subnets": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "Private Subnet IDs for deployment. This is for the ALTM appliances."
+    },
+    "VPCID": {
+      "Type": "AWS::EC2::VPC::Id",
+      "Description": "Select Virtual Private Cloud ID."
+    },
+    "CloudTrailLogBucket": {
+      "AllowedPattern": "^[a-z0-9]+-logs$||^$",
+      "ConstraintDescription": "Should match the pattern '^[a-z0-9]+-logs$'.",
+      "Type": "String",
+      "Description": "The S3 bucket where Cloudtrail logs are stored.  Ignored if this is not the first RMS deployment under this account."
+    },
+    "AvailabilityZoneCount": {
+      "Default": "2",
+      "Type": "String",
+      "Description": "Number of Availability Zones.  For environments where only Log ingestion is required, please select 0",
+      "AllowedValues": [
+        "0",
+        "1",
+        "2",
+        "3"
+      ]
+    },
+    "AlertLogicDataCenter": {
+      "Default": "US",
+      "Type": "String",
+      "Description": "Alert Logic Data Center where logs will be shipped.",
+      "AllowedValues": [
+        "US",
+        "EU"
+      ]
+    },
+    "VPCCIDR": {
+      "Description": "The IP address space to be used for this VPC, in CIDR notation",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "AllowedPattern": "^([0-9]+\\.){3}[0-9]+\\/[0-9]+$",
+      "ConstraintDescription": "Must be a valid CIDR range of the form x.x.x.x/x.",
+      "Type": "String"
+    },
+    "ThreatManagerBuildState": {
+      "Default": "Deploy",
+      "Type": "String",
+      "Description": "Select 'Deploy' unless the stack is being built for testing in an account without access to the Alert Logic AMIs.",
+      "AllowedValues": [
+        "Deploy",
+        "Test"
+      ]
+    },
+    "ThreatManagerVolumeSize": {
+      "Default": "50",
+      "Type": "String",
+      "Description": "Select EBS Volume Size in GB.",
+      "AllowedValues": [
+        "40",
+        "50",
+        "60",
+        "80",
+        "100",
+        "200",
+        "300",
+        "500",
+        "1000",
+        "1024"
+      ]
+    },
+    "Environment": {
+      "Default": "Development",
+      "Type": "String",
+      "Description": "Application environment for which this network is being created. e.g. Development/Production.",
+      "AllowedValues": [
+        "Development",
+        "Integration",
+        "PreProduction",
+        "Production",
+        "Staging",
+        "Test"
+      ]
+    },
+    "KeyName": {
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription": "Must be the name of an existing EC2 KeyPair.",
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instances."
+    },
+    "AlertLogicExternalId": {
+      "Default": "",
+      "AllowedPattern": "^[a-zA-Z0-9]{15,25}$||^$",
+      "Type": "String",
+      "Description": "A random alphanumeric string between 15 and 25 characters in length.  It must be provided to Alert Logic when creating the AWS Credentials in the Cloud Defender UI.  Omit if this is not the first RMS deployment under this account.",
+      "ConstraintDescription": "Must be empty or an alphanumeric string between 15-25 characters."
+    },
+    "InstanceRoleManagedPolicyArns": {
+      "Default": "",
+      "Type": "String",
+      "Description": "A comma delimited list of IAM policy ARNs for the InstanceRole IAM role.  IAM ARNs can be found within the Policies section of the AWS IAM console."
+    },
+    "DisableApiTermination": {
+      "Default": "False",
+      "Type": "String",
+      "Description": "Specifies whether the instance can be terminated through the API.",
+      "AllowedValues": [
+        "False",
+        "True"
+      ]
+    },
+    "ThreatManagerInstanceType": {
+      "Default": "c4.xlarge",
+      "Type": "String",
+      "ConstraintDescription": "Must be a valid EC2 instance type. Default is t2.micro",
+      "Description": "Select instance type",
+      "AllowedValues": [
+        "c3.large",
+        "c3.xlarge",
+        "c3.2xlarge",
+        "c3.4xlarge",
+        "c4.large",
+        "c4.xlarge",
+        "c4.2xlarge",
+        "c4.4xlarge"
+      ]
+    }
+  },
+  "Conditions": {
+    "BuildAZ3": {
+      "Fn::Equals": [
+        {
+          "Ref": "AvailabilityZoneCount"
+        },
+        "3"
+      ]
+    },
+    "BuildAZ2": {
+      "Fn::Or": [
+        {
+          "Condition": "BuildAZ3"
+        },
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "AvailabilityZoneCount"
+            },
+            "2"
+          ]
+        }
+      ]
+    },
+    "BuildAZ1": {
+      "Fn::Or": [
+        {
+          "Condition": "BuildAZ2"
+        },
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "AvailabilityZoneCount"
+            },
+            "1"
+          ]
+        }
+      ]
+    },
+    "OutputSNSSubscription": {
+      "Fn::And": [
+        {
+          "Condition": "CreateCrossAccountRole"
+        },
+        {
+          "Fn::Not": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-west-2"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "CreateCrossAccountRole": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "AlertLogicExternalId"
+            },
+            ""
+          ]
+        }
+      ]
+    },
+    "isTest": {
+      "Fn::Equals": [
+        {
+          "Ref": "ThreatManagerBuildState"
+        },
+        "Test"
+      ]
+    },
+    "InstanceRolePoliciesSet": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "InstanceRoleManagedPolicyArns"
+            },
+            ""
+          ]
+        }
+      ]
+    },
+    "useUS": {
+      "Fn::Equals": [
+        {
+          "Ref": "AlertLogicDataCenter"
+        },
+        "US"
+      ]
+    },
+    "CreateSNSSubscription": {
+      "Fn::And": [
+        {
+          "Condition": "CreateCrossAccountRole"
+        },
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "AWS::Region"
+            },
+            "us-west-2"
+          ]
+        }
+      ]
+    }
+  },
+  "Mappings": {
+    "AWSRegionAlertLogicAMI": {
+      "us-west-1": {
+        "altm": "ami-8b765eeb"
+      },
+      "us-east-1": {
+        "altm": "ami-c2a8f7b9"
+      },
+      "ap-northeast-1": {
+        "altm": "ami-dd17f5bb"
+      },
+      "eu-west-1": {
+        "altm": "ami-b6c52ecf"
+      },
+      "ap-northeast-2": {
+        "altm": "ami-26a17848"
+      },
+      "sa-east-1": {
+        "altm": "ami-a9b8cfc5"
+      },
+      "ap-southeast-1": {
+        "altm": "ami-a4d24fc7"
+      },
+      "ca-central-1": {
+        "altm": "ami-9e0db2fa"
+      },
+      "ap-southeast-2": {
+        "altm": "ami-9dbda2fe"
+      },
+      "us-west-2": {
+        "altm": "ami-cb9f85b2"
+      },
+      "ap-south-1": {
+        "altm": "ami-f6ccb499"
+      },
+      "eu-central-1": {
+        "altm": "ami-909438ff"
+      },
+      "us-east-2": {
+        "altm": "ami-322f0f57"
+      },
+      "eu-west-2": {
+        "altm": "ami-321d0c56"
+      }
+    },
+    "AlertLogicInfo": {
+      "US": {
+        "LogPrincipal": "arn:aws:iam::239734009475:root",
+        "TMPrincipal": "arn:aws:iam::733251395267:root"
+      },
+      "UK": {
+        "LogPrincipal": "arn:aws:iam::239734009475:root",
+        "TMPrincipal": "arn:aws:iam::857795874556:root"
+      }
+    },
+    "AWSRegionArch2AMI": {
+      "us-east-1": {
+        "64": "ami-8c1be5f6"
+      },
+      "us-west-1": {
+        "64": "ami-02eada62"
+      },
+      "ap-northeast-2": {
+        "64": "ami-9bec36f5"
+      },
+      "ap-northeast-1": {
+        "64": "ami-2a69be4c"
+      },
+      "sa-east-1": {
+        "64": "ami-f1344b9d"
+      },
+      "ap-southeast-1": {
+        "64": "ami-0797ea64"
+      },
+      "ca-central-1": {
+        "64": "ami-fd55ec99"
+      },
+      "ap-southeast-2": {
+        "64": "ami-8536d6e7"
+      },
+      "us-west-2": {
+        "64": "ami-e689729e"
+      },
+      "us-east-2": {
+        "64": "ami-c5062ba0"
+      },
+      "ap-south-1": {
+        "64": "ami-4fc58420"
+      },
+      "eu-central-1": {
+        "64": "ami-c7ee5ca8"
+      },
+      "eu-west-1": {
+        "64": "ami-acd005d5"
+      },
+      "eu-west-2": {
+        "64": "ami-1a7f6d7e"
+      }
+    }
+  },
+  "Resources": {
+    "InstanceRoleInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "InstanceRole"
+          }
+        ]
+      },
+      "Condition": "BuildAZ1"
+    },
+    "InstanceRolePolicies": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "InstanceRole",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "cloudformation:Describe*"
+              ],
+              "Resource": "*",
+              "Effect": "Allow"
+            },
+            {
+              "Action": [
+                "ssm:CreateAssociation"
+              ],
+              "Resource": "*",
+              "Effect": "Allow"
+            },
+            {
+              "Action": [
+                "cloudwatch:PutMetricData",
+                "cloudwatch:GetMetricStatistics",
+                "cloudwatch:ListMetrics"
+              ],
+              "Resource": "*",
+              "Effect": "Allow"
+            },
+            {
+              "Action": [
+                "ec2:DescribeTags"
+              ],
+              "Resource": "*",
+              "Effect": "Allow"
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "InstanceRole"
+          }
+        ]
+      },
+      "Condition": "BuildAZ1"
+    },
+    "ThreatManager1": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "Monitoring": "true",
+        "DisableApiTermination": {
+          "Ref": "DisableApiTermination"
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          },
+          {
+            "Key": "Name",
+            "Value": "Alert Logic Threat Manager 1"
+          },
+          {
+            "Key": "ProductGroup",
+            "Value": "RMS"
+          },
+          {
+            "Key": "ProductVendor",
+            "Value": "AlertLogic"
+          },
+          {
+            "Key": "ServiceProvider",
+            "Value": "Rackspace"
+          }
+        ],
+        "ImageId": {
+          "Fn::If": [
+            "isTest",
+            {
+              "Fn::FindInMap": [
+                "AWSRegionArch2AMI",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "64"
+              ]
+            },
+            {
+              "Fn::FindInMap": [
+                "AWSRegionAlertLogicAMI",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "altm"
+              ]
+            }
+          ]
+        },
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": {
+              "Fn::If": [
+                "isTest",
+                "/dev/xvda",
+                "/dev/sda1"
+              ]
+            },
+            "Ebs": {
+              "DeleteOnTermination": "true",
+              "VolumeType": "gp2",
+              "VolumeSize": {
+                "Ref": "ThreatManagerVolumeSize"
+              }
+            }
+          }
+        ],
+        "KeyName": {
+          "Ref": "KeyName"
+        },
+        "SecurityGroupIds": [
+          {
+            "Ref": "DeviceSecurityGroup"
+          }
+        ],
+        "SubnetId": {
+          "Fn::Select": [
+            "0",
+            {
+              "Ref": "Subnets"
+            }
+          ]
+        },
+        "IamInstanceProfile": {
+          "Ref": "InstanceRoleInstanceProfile"
+        },
+        "InstanceType": {
+          "Ref": "ThreatManagerInstanceType"
+        }
+      },
+      "Condition": "BuildAZ1"
+    },
+    "ALSQSQueue": {
+      "Type": "AWS::SQS::Queue",
+      "Condition": "CreateCrossAccountRole"
+    },
+    "SystemRecoveryAlarm3": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "2",
+        "Dimensions": [
+          {
+            "Name": "InstanceId",
+            "Value": {
+              "Ref": "ThreatManager3"
+            }
+          }
+        ],
+        "AlarmActions": [
+          {
+            "Fn::Sub": "arn:aws:automate:${AWS::Region}:ec2:recover"
+          }
+        ],
+        "AlarmDescription": "Status checks have failed for system, recovering instance",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Statistic": "Minimum",
+        "Threshold": "0",
+        "Unit": "Count",
+        "MetricName": "StatusCheckFailed_System"
+      },
+      "Condition": "BuildAZ3"
+    },
+    "SystemRecoveryAlarm2": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "2",
+        "Dimensions": [
+          {
+            "Name": "InstanceId",
+            "Value": {
+              "Ref": "ThreatManager2"
+            }
+          }
+        ],
+        "AlarmActions": [
+          {
+            "Fn::Sub": "arn:aws:automate:${AWS::Region}:ec2:recover"
+          }
+        ],
+        "AlarmDescription": "Status checks have failed for system, recovering instance",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Statistic": "Minimum",
+        "Threshold": "0",
+        "Unit": "Count",
+        "MetricName": "StatusCheckFailed_System"
+      },
+      "Condition": "BuildAZ2"
+    },
+    "SystemRecoveryAlarm1": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "2",
+        "Dimensions": [
+          {
+            "Name": "InstanceId",
+            "Value": {
+              "Ref": "ThreatManager1"
+            }
+          }
+        ],
+        "AlarmActions": [
+          {
+            "Fn::Sub": "arn:aws:automate:${AWS::Region}:ec2:recover"
+          }
+        ],
+        "AlarmDescription": "Status checks have failed for system, recovering instance",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Statistic": "Minimum",
+        "Threshold": "0",
+        "Unit": "Count",
+        "MetricName": "StatusCheckFailed_System"
+      },
+      "Condition": "BuildAZ1"
+    },
+    "InstanceRecoveryNotification2": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "10",
+        "Dimensions": [
+          {
+            "Name": "InstanceId",
+            "Value": {
+              "Ref": "ThreatManager2"
+            }
+          }
+        ],
+        "AlarmActions": [
+          {
+            "Fn::Sub": "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:rackspace-support-emergency"
+          }
+        ],
+        "AlarmDescription": "Status checks have failed, generating ticket.",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Statistic": "Minimum",
+        "Threshold": "0",
+        "OKActions": [
+          {
+            "Fn::Sub": "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:rackspace-support-emergency"
+          }
+        ],
+        "Unit": "Count",
+        "MetricName": "StatusCheckFailed_Instance"
+      },
+      "Condition": "BuildAZ2"
+    },
+    "InstanceRecoveryNotification3": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "10",
+        "Dimensions": [
+          {
+            "Name": "InstanceId",
+            "Value": {
+              "Ref": "ThreatManager3"
+            }
+          }
+        ],
+        "AlarmActions": [
+          {
+            "Fn::Sub": "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:rackspace-support-emergency"
+          }
+        ],
+        "AlarmDescription": "Status checks have failed, generating ticket.",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Statistic": "Minimum",
+        "Threshold": "0",
+        "OKActions": [
+          {
+            "Fn::Sub": "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:rackspace-support-emergency"
+          }
+        ],
+        "Unit": "Count",
+        "MetricName": "StatusCheckFailed_Instance"
+      },
+      "Condition": "BuildAZ3"
+    },
+    "ThreatManager3": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "Monitoring": "true",
+        "DisableApiTermination": {
+          "Ref": "DisableApiTermination"
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          },
+          {
+            "Key": "Name",
+            "Value": "Alert Logic Threat Manager 3"
+          },
+          {
+            "Key": "ProductGroup",
+            "Value": "RMS"
+          },
+          {
+            "Key": "ProductVendor",
+            "Value": "AlertLogic"
+          },
+          {
+            "Key": "ServiceProvider",
+            "Value": "Rackspace"
+          }
+        ],
+        "ImageId": {
+          "Fn::If": [
+            "isTest",
+            {
+              "Fn::FindInMap": [
+                "AWSRegionArch2AMI",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "64"
+              ]
+            },
+            {
+              "Fn::FindInMap": [
+                "AWSRegionAlertLogicAMI",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "altm"
+              ]
+            }
+          ]
+        },
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": {
+              "Fn::If": [
+                "isTest",
+                "/dev/xvda",
+                "/dev/sda1"
+              ]
+            },
+            "Ebs": {
+              "DeleteOnTermination": "true",
+              "VolumeType": "gp2",
+              "VolumeSize": {
+                "Ref": "ThreatManagerVolumeSize"
+              }
+            }
+          }
+        ],
+        "KeyName": {
+          "Ref": "KeyName"
+        },
+        "SecurityGroupIds": [
+          {
+            "Ref": "DeviceSecurityGroup"
+          }
+        ],
+        "SubnetId": {
+          "Fn::Select": [
+            "2",
+            {
+              "Ref": "Subnets"
+            }
+          ]
+        },
+        "IamInstanceProfile": {
+          "Ref": "InstanceRoleInstanceProfile"
+        },
+        "InstanceType": {
+          "Ref": "ThreatManagerInstanceType"
+        }
+      },
+      "Condition": "BuildAZ3"
+    },
+    "ALSQSPolicy": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "Queues": [
+          {
+            "Ref": "ALSQSQueue"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": "sqs:SendMessage",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ALSQSQueue",
+                    "Arn"
+                  ]
+                }
+              ],
+              "Effect": "Allow",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::Sub": "arn:aws:sns:us-west-2:${AWS::AccountId}:rackspace-trail"
+                  }
+                }
+              },
+              "Principal": {
+                "AWS": "*"
+              }
+            }
+          ]
+        }
+      },
+      "Condition": "CreateCrossAccountRole"
+    },
+    "SystemRecoveryNotification2": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "10",
+        "Dimensions": [
+          {
+            "Name": "InstanceId",
+            "Value": {
+              "Ref": "ThreatManager2"
+            }
+          }
+        ],
+        "AlarmActions": [
+          {
+            "Fn::Sub": "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:rackspace-support-emergency"
+          }
+        ],
+        "AlarmDescription": "Trigger ticket notification when instance status check fails for 10 consecutive minutes.",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Statistic": "Minimum",
+        "Threshold": "0",
+        "OKActions": [
+          {
+            "Fn::Sub": "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:rackspace-support-emergency"
+          }
+        ],
+        "Unit": "Count",
+        "MetricName": "StatusCheckFailed_System"
+      },
+      "Condition": "BuildAZ2"
+    },
+    "SystemRecoveryNotification3": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "10",
+        "Dimensions": [
+          {
+            "Name": "InstanceId",
+            "Value": {
+              "Ref": "ThreatManager3"
+            }
+          }
+        ],
+        "AlarmActions": [
+          {
+            "Fn::Sub": "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:rackspace-support-emergency"
+          }
+        ],
+        "AlarmDescription": "Trigger ticket notification when instance status check fails for 10 consecutive minutes.",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Statistic": "Minimum",
+        "Threshold": "0",
+        "OKActions": [
+          {
+            "Fn::Sub": "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:rackspace-support-emergency"
+          }
+        ],
+        "Unit": "Count",
+        "MetricName": "StatusCheckFailed_System"
+      },
+      "Condition": "BuildAZ3"
+    },
+    "SystemRecoveryNotification1": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "10",
+        "Dimensions": [
+          {
+            "Name": "InstanceId",
+            "Value": {
+              "Ref": "ThreatManager1"
+            }
+          }
+        ],
+        "AlarmActions": [
+          {
+            "Fn::Sub": "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:rackspace-support-emergency"
+          }
+        ],
+        "AlarmDescription": "Trigger ticket notification when instance status check fails for 10 consecutive minutes.",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Statistic": "Minimum",
+        "Threshold": "0",
+        "OKActions": [
+          {
+            "Fn::Sub": "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:rackspace-support-emergency"
+          }
+        ],
+        "Unit": "Count",
+        "MetricName": "StatusCheckFailed_System"
+      },
+      "Condition": "BuildAZ1"
+    },
+    "ALCloudTrailSubscription": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "Endpoint": {
+          "Fn::GetAtt": [
+            "ALSQSQueue",
+            "Arn"
+          ]
+        },
+        "Protocol": "sqs",
+        "TopicArn": {
+          "Fn::Sub": "arn:aws:sns:us-west-2:${AWS::AccountId}:rackspace-trail"
+        }
+      },
+      "Condition": "CreateSNSSubscription"
+    },
+    "LoggingCrossAccountRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "LogCrossAccountRolePolicies",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:aws:s3:::${CloudTrailLogBucket}/*"
+                  },
+                  "Effect": "Allow"
+                },
+                {
+                  "Action": [
+                    "s3:ListBucket"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:aws:s3:::${CloudTrailLogBucket}"
+                  },
+                  "Effect": "Allow"
+                },
+                {
+                  "Action": [
+                    "sqs:GetQueueUrl",
+                    "sqs:Receivemessage",
+                    "sqs:DeleteMessage"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "ALSQSQueue",
+                      "Arn"
+                    ]
+                  },
+                  "Effect": "Allow"
+                }
+              ]
+            }
+          }
+        ],
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Condition": {
+                "StringEquals": {
+                  "sts:ExternalId": {
+                    "Ref": "AlertLogicExternalId"
+                  }
+                }
+              },
+              "Principal": {
+                "AWS": {
+                  "Fn::FindInMap": [
+                    "AlertLogicInfo",
+                    {
+                      "Ref": "AlertLogicDataCenter"
+                    },
+                    "LogPrincipal"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "Condition": "CreateCrossAccountRole"
+    },
+    "InstanceRecoveryAlarm3": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "5",
+        "Dimensions": [
+          {
+            "Name": "InstanceId",
+            "Value": {
+              "Ref": "ThreatManager3"
+            }
+          }
+        ],
+        "AlarmActions": [
+          {
+            "Fn::Sub": "arn:aws:swf:${AWS::Region}:${AWS::AccountId}:action/actions/AWS_EC2.InstanceId.Reboot/1.0"
+          }
+        ],
+        "AlarmDescription": "Status checks have failed, rebooting system.",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Statistic": "Minimum",
+        "Threshold": "0",
+        "Unit": "Count",
+        "MetricName": "StatusCheckFailed_Instance"
+      },
+      "Condition": "BuildAZ3"
+    },
+    "InstanceRecoveryAlarm2": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "5",
+        "Dimensions": [
+          {
+            "Name": "InstanceId",
+            "Value": {
+              "Ref": "ThreatManager2"
+            }
+          }
+        ],
+        "AlarmActions": [
+          {
+            "Fn::Sub": "arn:aws:swf:${AWS::Region}:${AWS::AccountId}:action/actions/AWS_EC2.InstanceId.Reboot/1.0"
+          }
+        ],
+        "AlarmDescription": "Status checks have failed, rebooting system.",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Statistic": "Minimum",
+        "Threshold": "0",
+        "Unit": "Count",
+        "MetricName": "StatusCheckFailed_Instance"
+      },
+      "Condition": "BuildAZ2"
+    },
+    "InstanceRecoveryAlarm1": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "5",
+        "Dimensions": [
+          {
+            "Name": "InstanceId",
+            "Value": {
+              "Ref": "ThreatManager1"
+            }
+          }
+        ],
+        "AlarmActions": [
+          {
+            "Fn::Sub": "arn:aws:swf:${AWS::Region}:${AWS::AccountId}:action/actions/AWS_EC2.InstanceId.Reboot/1.0"
+          }
+        ],
+        "AlarmDescription": "Status checks have failed, rebooting system.",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Statistic": "Minimum",
+        "Threshold": "0",
+        "Unit": "Count",
+        "MetricName": "StatusCheckFailed_Instance"
+      },
+      "Condition": "BuildAZ1"
+    },
+    "InstanceRecoveryNotification1": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "10",
+        "Dimensions": [
+          {
+            "Name": "InstanceId",
+            "Value": {
+              "Ref": "ThreatManager1"
+            }
+          }
+        ],
+        "AlarmActions": [
+          {
+            "Fn::Sub": "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:rackspace-support-emergency"
+          }
+        ],
+        "AlarmDescription": "Status checks have failed, generating ticket.",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Statistic": "Minimum",
+        "Threshold": "0",
+        "OKActions": [
+          {
+            "Fn::Sub": "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:rackspace-support-emergency"
+          }
+        ],
+        "Unit": "Count",
+        "MetricName": "StatusCheckFailed_Instance"
+      },
+      "Condition": "BuildAZ1"
+    },
+    "InstanceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "ManagedPolicyArns": {
+          "Fn::Split": [
+            ",",
+            {
+              "Fn::Join": [
+                ",",
+                [
+                  "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM",
+                  {
+                    "Fn::If": [
+                      "InstanceRolePoliciesSet",
+                      {
+                        "Ref": "InstanceRoleManagedPolicyArns"
+                      },
+                      {
+                        "Ref": "AWS::NoValue"
+                      }
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              }
+            }
+          ]
+        }
+      },
+      "Condition": "BuildAZ1"
+    },
+    "DeviceSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "SecurityGroupIngress": [
+          {
+            "ToPort": "7777",
+            "IpProtocol": "tcp",
+            "CidrIp": {
+              "Ref": "VPCCIDR"
+            },
+            "FromPort": "7777"
+          },
+          {
+            "ToPort": "443",
+            "IpProtocol": "tcp",
+            "CidrIp": {
+              "Ref": "VPCCIDR"
+            },
+            "FromPort": "443"
+          }
+        ],
+        "VpcId": {
+          "Ref": "VPCID"
+        },
+        "SecurityGroupEgress": {
+          "Fn::If": [
+            "useUS",
+            [
+              {
+                "ToPort": "443",
+                "IpProtocol": "tcp",
+                "FromPort": "443",
+                "CidrIp": "204.110.218.96/27"
+              },
+              {
+                "ToPort": "443",
+                "IpProtocol": "tcp",
+                "FromPort": "443",
+                "CidrIp": "204.110.219.96/27"
+              },
+              {
+                "ToPort": "443",
+                "IpProtocol": "tcp",
+                "FromPort": "443",
+                "CidrIp": "208.71.209.32/27"
+              },
+              {
+                "ToPort": "4138",
+                "IpProtocol": "tcp",
+                "FromPort": "4138",
+                "CidrIp": "204.110.218.96/27"
+              },
+              {
+                "ToPort": "4138",
+                "IpProtocol": "tcp",
+                "FromPort": "4138",
+                "CidrIp": "204.110.219.96/27"
+              },
+              {
+                "ToPort": "4138",
+                "IpProtocol": "tcp",
+                "FromPort": "4138",
+                "CidrIp": "208.71.209.32/27"
+              },
+              {
+                "ToPort": "53",
+                "IpProtocol": "udp",
+                "FromPort": "53",
+                "CidrIp": "8.8.4.4/32"
+              },
+              {
+                "ToPort": "53",
+                "IpProtocol": "tcp",
+                "FromPort": "53",
+                "CidrIp": "8.8.4.4/32"
+              },
+              {
+                "ToPort": "53",
+                "IpProtocol": "udp",
+                "FromPort": "53",
+                "CidrIp": "8.8.8.8/32"
+              },
+              {
+                "ToPort": "53",
+                "IpProtocol": "tcp",
+                "FromPort": "53",
+                "CidrIp": "8.8.8.8/32"
+              },
+              {
+                "ToPort": "80",
+                "IpProtocol": "tcp",
+                "FromPort": "80",
+                "CidrIp": "0.0.0.0/0"
+              },
+              {
+                "ToPort": "123",
+                "IpProtocol": "udp",
+                "FromPort": "123",
+                "CidrIp": "204.110.219.96/27"
+              },
+              {
+                "ToPort": "123",
+                "IpProtocol": "udp",
+                "FromPort": "123",
+                "CidrIp": "208.71.209.32/27"
+              }
+            ],
+            [
+              {
+                "ToPort": "443",
+                "IpProtocol": "tcp",
+                "FromPort": "443",
+                "CidrIp": "185.54.124.0/24"
+              },
+              {
+                "ToPort": "4138",
+                "IpProtocol": "tcp",
+                "FromPort": "4138",
+                "CidrIp": "185.54.124.0/24"
+              },
+              {
+                "ToPort": "53",
+                "IpProtocol": "udp",
+                "FromPort": "53",
+                "CidrIp": "8.8.4.4/32"
+              },
+              {
+                "ToPort": "53",
+                "IpProtocol": "tcp",
+                "FromPort": "53",
+                "CidrIp": "8.8.4.4/32"
+              },
+              {
+                "ToPort": "53",
+                "IpProtocol": "udp",
+                "FromPort": "53",
+                "CidrIp": "8.8.8.8/32"
+              },
+              {
+                "ToPort": "53",
+                "IpProtocol": "tcp",
+                "FromPort": "53",
+                "CidrIp": "8.8.8.8/32"
+              },
+              {
+                "ToPort": "80",
+                "IpProtocol": "tcp",
+                "FromPort": "80",
+                "CidrIp": "0.0.0.0/0"
+              },
+              {
+                "ToPort": "123",
+                "IpProtocol": "udp",
+                "FromPort": "123",
+                "CidrIp": "185.54.124.0/24"
+              }
+            ]
+          ]
+        },
+        "GroupDescription": "Enable In-Out access for Alert Logic Threat Management Services.",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          },
+          {
+            "Key": "Name",
+            "Value": "ThreatManager Security Group"
+          },
+          {
+            "Key": "ProductGroup",
+            "Value": "RMS"
+          },
+          {
+            "Key": "ProductVendor",
+            "Value": "AlertLogic"
+          },
+          {
+            "Key": "ServiceProvider",
+            "Value": "Rackspace"
+          }
+        ]
+      },
+      "Condition": "BuildAZ1"
+    },
+    "AgentSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPCID"
+        },
+        "SecurityGroupEgress": [
+          {
+            "ToPort": "7777",
+            "IpProtocol": "tcp",
+            "DestinationSecurityGroupId": {
+              "Ref": "DeviceSecurityGroup"
+            },
+            "FromPort": "7777"
+          },
+          {
+            "ToPort": "443",
+            "IpProtocol": "tcp",
+            "DestinationSecurityGroupId": {
+              "Ref": "DeviceSecurityGroup"
+            },
+            "FromPort": "443"
+          },
+          {
+            "ToPort": "443",
+            "IpProtocol": "tcp",
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "443"
+          }
+        ],
+        "GroupDescription": "Enable Out access to Alert Logic Threat Management Device.",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          },
+          {
+            "Key": "Name",
+            "Value": "ThreatManager Client Security Group"
+          },
+          {
+            "Key": "ProductGroup",
+            "Value": "RMS"
+          },
+          {
+            "Key": "ProductVendor",
+            "Value": "AlertLogic"
+          },
+          {
+            "Key": "ServiceProvider",
+            "Value": "Rackspace"
+          }
+        ]
+      },
+      "Condition": "BuildAZ1"
+    },
+    "CrossAccountRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "CrossAccountRolePolicies",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Action": [
+                    "autoscaling:Describe*",
+                    "directconnect:Describe*",
+                    "elasticloadbalancing:Describe*",
+                    "ec2:Describe*",
+                    "rds:Describe*",
+                    "rds:DownloadDBLogFilePortion",
+                    "rds:ListTagsForResource",
+                    "s3:ListAllMyBuckets",
+                    "s3:ListBucket",
+                    "s3:GetBucketLocation",
+                    "s3:GetBucket*",
+                    "s3:GetObjectAcl",
+                    "s3:GetObjectVersionAcl"
+                  ],
+                  "Resource": "*",
+                  "Effect": "Allow"
+                },
+                {
+                  "Action": [
+                    "cloudtrail:Describe*",
+                    "cloudtrail:GetTrailStatus"
+                  ],
+                  "Resource": "*",
+                  "Effect": "Allow"
+                },
+                {
+                  "Action": [
+                    "iam:List*",
+                    "iam:Get*"
+                  ],
+                  "Resource": "*",
+                  "Effect": "Allow"
+                },
+                {
+                  "Action": [
+                    "sns:addpermission",
+                    "sns:listtopics",
+                    "sns:settopicattributes",
+                    "sns:gettopicattributes",
+                    "sns:subscribe"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:aws:sns:us-west-2:${AWS::AccountId}:rackspace-trail"
+                  },
+                  "Effect": "Allow"
+                },
+                {
+                  "Action": [
+                    "sns:ListTopics"
+                  ],
+                  "Resource": "*",
+                  "Effect": "Allow"
+                },
+                {
+                  "Action": [
+                    "sqs:CreateQueue",
+                    "sqs:DeleteQueue",
+                    "sqs:SetQueueAttributes",
+                    "sqs:GetQueueAttributes",
+                    "sqs:ListQueues",
+                    "sqs:ReceiveMessage",
+                    "sqs:DeleteMessage",
+                    "sqs:GetQueueAttributes",
+                    "sqs:GetQueueUrl"
+                  ],
+                  "Resource": "arn:aws:sqs:*:*:outcomesbucket*",
+                  "Effect": "Allow"
+                }
+              ]
+            }
+          }
+        ],
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Condition": {
+                "StringEquals": {
+                  "sts:ExternalId": {
+                    "Ref": "AlertLogicExternalId"
+                  }
+                }
+              },
+              "Principal": {
+                "AWS": {
+                  "Fn::FindInMap": [
+                    "AlertLogicInfo",
+                    {
+                      "Ref": "AlertLogicDataCenter"
+                    },
+                    "TMPrincipal"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "Condition": "CreateCrossAccountRole"
+    },
+    "ThreatManager2": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "Monitoring": "true",
+        "DisableApiTermination": {
+          "Ref": "DisableApiTermination"
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          },
+          {
+            "Key": "Name",
+            "Value": "Alert Logic Threat Manager 2"
+          },
+          {
+            "Key": "ProductGroup",
+            "Value": "RMS"
+          },
+          {
+            "Key": "ProductVendor",
+            "Value": "AlertLogic"
+          },
+          {
+            "Key": "ServiceProvider",
+            "Value": "Rackspace"
+          }
+        ],
+        "ImageId": {
+          "Fn::If": [
+            "isTest",
+            {
+              "Fn::FindInMap": [
+                "AWSRegionArch2AMI",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "64"
+              ]
+            },
+            {
+              "Fn::FindInMap": [
+                "AWSRegionAlertLogicAMI",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "altm"
+              ]
+            }
+          ]
+        },
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": {
+              "Fn::If": [
+                "isTest",
+                "/dev/xvda",
+                "/dev/sda1"
+              ]
+            },
+            "Ebs": {
+              "DeleteOnTermination": "true",
+              "VolumeType": "gp2",
+              "VolumeSize": {
+                "Ref": "ThreatManagerVolumeSize"
+              }
+            }
+          }
+        ],
+        "KeyName": {
+          "Ref": "KeyName"
+        },
+        "SecurityGroupIds": [
+          {
+            "Ref": "DeviceSecurityGroup"
+          }
+        ],
+        "SubnetId": {
+          "Fn::Select": [
+            "1",
+            {
+              "Ref": "Subnets"
+            }
+          ]
+        },
+        "IamInstanceProfile": {
+          "Ref": "InstanceRoleInstanceProfile"
+        },
+        "InstanceType": {
+          "Ref": "ThreatManagerInstanceType"
+        }
+      },
+      "Condition": "BuildAZ2"
+    }
+  },
+  "Outputs": {
+    "ConnectSQSQueue": {
+      "Value": {
+        "Fn::Sub": "aws sns subscribe --topic-arn arn:aws:sns:us-west-2:${AWS::AccountId}:rackspace-trail --protocol sqs --notification-endpoint ${ALSQSQueue.Arn}  --region us-west-2"
+      },
+      "Condition": "OutputSNSSubscription"
+    },
+    "SQSQueueName": {
+      "Value": {
+        "Fn::GetAtt": [
+          "ALSQSQueue",
+          "QueueName"
+        ]
+      },
+      "Condition": "CreateCrossAccountRole"
+    },
+    "AlertLogicApplianceIPs": {
+      "Value": {
+        "Fn::Join": [
+          ",",
+          [
+            {
+              "Fn::GetAtt": [
+                "ThreatManager1",
+                "PrivateIp"
+              ]
+            },
+            {
+              "Fn::If": [
+                "BuildAZ2",
+                {
+                  "Fn::GetAtt": [
+                    "ThreatManager2",
+                    "PrivateIp"
+                  ]
+                },
+                {
+                  "Ref": "AWS::NoValue"
+                }
+              ]
+            },
+            {
+              "Fn::If": [
+                "BuildAZ3",
+                {
+                  "Fn::GetAtt": [
+                    "ThreatManager3",
+                    "PrivateIp"
+                  ]
+                },
+                {
+                  "Ref": "AWS::NoValue"
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "Condition": "BuildAZ1"
+    },
+    "LoggingCrossAccountRole": {
+      "Value": {
+        "Fn::GetAtt": [
+          "LoggingCrossAccountRole",
+          "Arn"
+        ]
+      },
+      "Description": "Log Ingestion Cross Account Role ARN.",
+      "Condition": "CreateCrossAccountRole"
+    },
+    "DeviceSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "DeviceSecurityGroup",
+          "GroupId"
+        ]
+      },
+      "Condition": "BuildAZ1"
+    },
+    "AgentSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "AgentSecurityGroup",
+          "GroupId"
+        ]
+      },
+      "Condition": "BuildAZ1"
+    },
+    "CrossAccountRole": {
+      "Value": {
+        "Fn::GetAtt": [
+          "CrossAccountRole",
+          "Arn"
+        ]
+      },
+      "Description": "Cross Account Role ARN.",
+      "Condition": "CreateCrossAccountRole"
+    },
+    "ExternalID": {
+      "Value": {
+        "Ref": "AlertLogicExternalId"
+      },
+      "Description": " when creating the AWS Credentials in the Cloud Defender UI.",
+      "Condition": "CreateCrossAccountRole"
+    }
+  }
+}
