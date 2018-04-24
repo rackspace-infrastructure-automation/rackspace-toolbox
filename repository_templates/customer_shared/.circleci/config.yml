@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: hashicorp/terraform:0.11.5
+      - image: hashicorp/terraform:0.11.7
     steps:
       - checkout
       - run:

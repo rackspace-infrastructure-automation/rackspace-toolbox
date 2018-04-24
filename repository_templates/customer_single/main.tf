@@ -25,7 +25,7 @@ provider "aws" {
 
 # remote state
 terraform {
-  required_version = "0.11.5"
+  required_version = "0.11.7"
 
   backend "s3" {
     bucket  = "customer-environment-tfstate"
