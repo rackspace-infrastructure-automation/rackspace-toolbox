@@ -2,7 +2,7 @@ version: 2
 jobs:
   plan:
     docker:
-      - image: hashicorp/terraform:0.11.5
+      - image: hashicorp/terraform:0.11.7
     steps:
       - checkout
       - run:
@@ -23,7 +23,7 @@ jobs:
 
   apply:
     docker:
-      - image: hashicorp/terraform:0.11.5
+      - image: hashicorp/terraform:0.11.7
     steps:
       - checkout
       - add_ssh_keys:
