@@ -1,13 +1,28 @@
 #!/bin/sh
 
-TF_DIRS=$(find . -not -path "*.terraform*" -type f -iname "*.tf*" -exec dirname '{}' \; | sort | uniq)
-validate_failed="no"
-for DIR in $TF_DIRS
-  do
-    if ! terraform validate -input=false -check-variables=false -no-color "${DIR}";
-      then
-        echo "Validation failed, please run: terraform validate ${DIR}"
-        validate_failed="yes"
-      fi
-  done
-if [ ${validate_failed} != "no" ]; then exit 1; fi
+#!/bin/sh
+
+WORKING_DIR=$(pwd)
+WORKSPACE_DIR=$WORKING_DIR/workspace
+LAYERS_DIR=$WORKING_DIR/layers
+LAYERS=$(find $LAYERS_DIR/* -type d -maxdepth 0 -exec basename '{}' \; | sort -n)
+
+OVERALL_RETURN=0
+for LAYER in $LAYERS; do
+  echo "terraform validate $LAYER"
+
+  VALIDATE_OUTPUT=$(cd $LAYERS_DIR/$LAYER && terraform validate -input=false -check-variables=false -no-color .)
+  VALIDATE_RETURN=$?
+
+  if [ ${VALIDATE_RETURN} -ne 0 ]
+  then
+    echo "Validate failed in ${LAYER}, please run terraform validate"
+    echo ${VALIDATE_RETURN}
+    OVERALL_RETURN=1
+  fi
+done
+
+if [ ${OVERALL_RETURN} -ne 0 ]
+then
+  exit ${OVERALL_RETURN}
+fi

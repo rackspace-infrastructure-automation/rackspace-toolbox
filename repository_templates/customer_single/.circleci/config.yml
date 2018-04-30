@@ -5,6 +5,7 @@ jobs:
       - image: hashicorp/terraform:0.11.7
     steps:
       - checkout
+      - run: scripts/check_master.sh
       - run:
           name: lint
           command: ./scripts/lint.sh
@@ -12,27 +13,26 @@ jobs:
           fingerprints:
             - "01:23:45:67:89:10:11:12:13:14:15:16:17:18:19:20"
       - run: mkdir -p workspace
-      - run: terraform init -input=false -no-color
-      - run: terraform plan -no-color -input=false -out=workspace/terraform.plan
-      - run: tar -czf workspace/.terraform.tar.gz .terraform
+      - run: scripts/plan.sh
       - persist_to_workspace:
           root: workspace
           paths:
-            - .terraform.tar.gz
-            - terraform.plan
+            - .terraform.*.tar.gz
+            - terraform.*.plan
+            - changed_layers
 
   apply:
     docker:
       - image: hashicorp/terraform:0.11.7
     steps:
       - checkout
+      - run: scripts/check_master.sh
       - add_ssh_keys:
           fingerprints:
             - "01:23:45:67:89:10:11:12:13:14:15:16:17:18:19:20"
       - attach_workspace:
           at: workspace
-      - run: tar xzf workspace/.terraform.tar.gz
-      - run: terraform apply -input=false -no-color workspace/terraform.plan
+      - run: scripts/apply.sh
 
 
 workflows:
