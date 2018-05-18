@@ -37,7 +37,7 @@ terraform {
 
 # enabling circleci to run terraform
 module "terraform_circleci_iam" {
-  source = "git@github.com:rackspace-infrastructure-automation/customer-shared-git-url//terraform?ref=v0.0.1"
+  source = "git@github.com:rackspace-infrastructure-automation/customer-shared-git-url//modules/terraform?ref=v0.0.1"
 }
 
 # regional modules
