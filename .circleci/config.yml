@@ -5,12 +5,14 @@ jobs:
       - image: hashicorp/terraform:0.11.7
     steps:
       - checkout
+      - run: mv repository_templates/scripts scripts
+      - run: mkdir layers && mv aviator layers/
       - run:
           name: lint
-          command: ./repository_templates/scripts/lint.sh
+          command: ./scripts/lint.sh
       - run:
           name: validate
-          command: ./repository_templates/scripts/validate.sh
+          command: ./scripts/validate.sh
 
       # future testing of actual templates
 
