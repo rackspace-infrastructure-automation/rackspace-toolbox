@@ -19,5 +19,5 @@ for LAYER in $LAYERS; do
   (cd "$LAYERS_DIR/$LAYER" && tar xzf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz")
 
   echo "terraform apply $LAYER"
-  (cd "$LAYERS_DIR/$LAYER" && terraform apply -input=false -no-color "$DIR/workspace/terraform.$LAYER.plan")
+  (cd "$LAYERS_DIR/$LAYER" && terraform apply -input=false -no-color "$WORKSPACE_DIR/terraform.$LAYER.plan")
 done
