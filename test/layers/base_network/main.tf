@@ -8,6 +8,7 @@ provider "template" {
 
 provider "aws" {
   version = "~> 1.2"
+  region  = "us-east-1"
 }
 
 module "base_network" "test1" {
