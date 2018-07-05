@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 # standard paths
 WORKING_DIR=$(pwd)
 WORKSPACE_DIR="$WORKING_DIR/workspace"

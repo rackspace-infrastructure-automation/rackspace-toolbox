@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 WORKING_DIR=$(pwd)
 WORKSPACE_DIR="$WORKING_DIR/workspace"
 LAYERS_DIR="$WORKING_DIR/layers"
