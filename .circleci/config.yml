@@ -23,6 +23,7 @@ jobs:
       - run:
           name: apply
           command: cd test && ../bin/apply.sh || echo "apply failed."
+      - run: find . -type f
       - run:
           name: clean
           command: cd test && terraform destroy -refresh=false -auto-approve # must succeed or we have something to clean up manually
