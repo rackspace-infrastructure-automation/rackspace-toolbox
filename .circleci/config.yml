@@ -25,8 +25,8 @@ jobs:
           command: cd test && ../bin/apply.sh || echo "apply failed."
       - run: find . -type f
       - run:
-          name: clean
-          command: cd test && terraform destroy -refresh=false -auto-approve # must succeed or we have something to clean up manually
+          name: destroy
+          command: cd test && ../bin/destroy.sh  # must succeed or we have something to clean up manually
 
 workflows:
   version: 2
