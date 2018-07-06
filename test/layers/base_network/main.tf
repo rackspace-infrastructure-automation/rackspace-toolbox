@@ -11,12 +11,8 @@ provider "aws" {
   region  = "us-east-1"
 }
 
-# module "base_network" "test1" {
-#  source = "../../../aviator/base_network"
-#
-# all defaults
-# }
+module "base_network" "test1" {
+  source = "../../../aviator/base_network"
 
-resource "aws_route53_zone" "primary" {
-  name = "pleasedontexist.com"
+  # all defaults
 }

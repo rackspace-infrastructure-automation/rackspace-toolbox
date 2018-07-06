@@ -23,7 +23,6 @@ jobs:
       - run:
           name: apply
           command: cd test && ../bin/apply.sh || echo "apply failed."
-      - run: find . -type f
       - run:
           name: destroy
           command: cd test && ../bin/destroy.sh  # must succeed or we have something to clean up manually
