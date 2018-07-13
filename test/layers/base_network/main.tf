@@ -15,4 +15,5 @@ module "base_network" "test1" {
   source = "../../../aviator/base_network"
 
   # all defaults
+  vpc_name = "test"
 }
