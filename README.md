@@ -22,4 +22,8 @@ Please reference the below list of statuses prior to using any linked modules on
 | Module Name		| Status	|
 | --------------------- | -------------	|
 | [ALB](https://github.com/rackspace-infrastructure-automation/aws-terraform-alb)		| Needs Testing	|
-
+| [Aurora](https://github.com/rackspace-infrastructure-automation/aws-terraform-aurora)		| Needs Testing |
+| [Cloudfront w/ Custom Origin](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudfront_custom_origin) | Needs Testing |
+| [Cloudfront w/ S3 Origin](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudfront_s3_origin) | Needs Testing |
+| [EC2 Autorecovery](https://github.com/rackspace-infrastructure-automation/aws-terraform-ec2_autorecovery) | Needs Testing |
+| [VPC Basenetwork](https://github.com/rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork) | Needs Testing |
