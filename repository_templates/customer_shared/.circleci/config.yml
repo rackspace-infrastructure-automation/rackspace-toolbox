@@ -9,6 +9,7 @@ jobs:
       - run:
           name: lint
           command: bin/lint.sh
+      - run: mkdir -p workspace
       - run:
           name: validate
           command: bin/validate.sh
