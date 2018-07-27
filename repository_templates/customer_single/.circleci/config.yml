@@ -20,6 +20,7 @@ jobs:
             - .terraform.*.tar.gz
             - terraform.*.plan
             - changed_layers
+            - full_plan_output.log
 
   apply:
     docker:
