@@ -22,10 +22,10 @@ then
 fi
 
 if [ -f "$WORKSPACE_DIR/changed_layers" ]; then
-  CHANGED_LAYERS=$(cat "$WORKING_DIR/changed_layers")
+  CHANGED_LAYERS=$(cat "$WORKSPACE_DIR/changed_layers")
 else
   CHANGED_LAYERS=$(git diff --name-only "$MASTER_REF" -- "$LAYERS_DIR" | awk -F "/" '{print $2}' | sort -n | uniq)
-  echo $CHANGED_LAYERS > "$WORKING_DIR/changed_layers"
+  echo $CHANGED_LAYERS > "$WORKSPACE_DIR/changed_layers"
 fi
 
 echo "Changed layers: "
