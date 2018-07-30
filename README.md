@@ -20,7 +20,7 @@ Modules may be in various states of development.
 Please reference the below list of statuses prior to using any linked modules on customer builds.
 
 | Module Name  | Developed | Unit/Self-Contained Testing | Integration Testing | Ready for Customer Use | Notes |
-| --------------------- | ------------- |
+| --------------------- | ------------- |-|-|-|-|
 | [ALB](https://github.com/rackspace-infrastructure-automation/aws-terraform-alb) | :white_check_mark: | :x: | :x: | :x:  | n/a |
 | [Aurora](https://github.com/rackspace-infrastructure-automation/aws-terraform-aurora) | :white_check_mark: |  :x: | :x: | :x:  | n/a |
 | [Cloudfront w/ Custom Origin](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudfront_custom_origin) | :white_check_mark: |  :x: | :x: | :x:  | n/a |
