@@ -5,11 +5,11 @@ jobs:
       - image: hashicorp/terraform:0.11.7
     steps:
       - checkout
+      - run: mkdir -p workspace
       - run: mv modules layers
       - run:
           name: lint
           command: bin/lint.sh
-      - run: mkdir -p workspace
       - run:
           name: validate
           command: bin/validate.sh
