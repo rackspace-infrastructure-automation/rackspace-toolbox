@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 module "base_network" "test1" {
-  source = "../../../aviator/base_network"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork.git"
 
   # all defaults
   vpc_name = "test"

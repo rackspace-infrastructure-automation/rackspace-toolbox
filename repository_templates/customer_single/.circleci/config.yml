@@ -5,6 +5,7 @@ jobs:
       - image: hashicorp/terraform:0.11.7
     steps:
       - checkout
+      - run: mkdir -p workspace
       - run: bin/check_master.sh
       - run:
           name: lint
@@ -12,7 +13,6 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "01:23:45:67:89:10:11:12:13:14:15:16:17:18:19:20"
-      - run: mkdir -p workspace
       - run: bin/plan.sh
       - persist_to_workspace:
           root: workspace
@@ -20,6 +20,7 @@ jobs:
             - .terraform.*.tar.gz
             - terraform.*.plan
             - changed_layers
+            - full_plan_output.log
 
   apply:
     docker:
