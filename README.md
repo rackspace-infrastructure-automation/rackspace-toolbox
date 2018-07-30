@@ -8,29 +8,29 @@ Feature Enhancements, Bug Reports, and New Module requests for all Terraform mod
 
 Modules may be in various states of development.
 
-| Stage			| Description	|
-| ---------------------	| -------------	|
-| In Development	| A new module is actively being worked on and is not ready for testing or use |
-| Needs Testing		| Initial module development is complete, but the module does not have CI tests and is not certified for customer use |
-| Ready			| Module is tested and ready for customer use. |
+| Stage | Description |
+| --------------------- | ------------- |
+| In Development | A new module is actively being worked on and is not ready for testing or use |
+| Needs Testing | Initial module development is complete, but the module does not have CI tests and is not certified for customer use |
+| Ready | Module is tested and ready for customer use. |
 
 
 ## Module List
 
 Please reference the below list of statuses prior to using any linked modules on customer builds.
 
-| Module Name		| Status	|
-| --------------------- | -------------	|
-| [ALB](https://github.com/rackspace-infrastructure-automation/aws-terraform-alb)		| Needs Testing	|
-| [Aurora](https://github.com/rackspace-infrastructure-automation/aws-terraform-aurora)		| Needs Testing |
-| [Cloudfront w/ Custom Origin](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudfront_custom_origin) | Needs Testing |
-| [Cloudfront w/ S3 Origin](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudfront_s3_origin) | Needs Testing |
-| [EC2 ASG](https://github.com/rackspace-infrastructure-automation/aws-terraform-ec2_asg) | Needs Testing |
-| [EC2 Autorecovery](https://github.com/rackspace-infrastructure-automation/aws-terraform-ec2_autorecovery) | Needs Testing |
-| [ECS Cluster](https://github.com/rackspace-infrastructure-automation/aws-terraform-ecs_cluster) | Needs Testing |
-| [RDS](https://github.com/rackspace-infrastructure-automation/aws-terraform-rds) | Needs Testing |
-| [RMS](https://github.com/rackspace-infrastructure-automation/aws-terraform-rms) | Needs Testing |
-| [Route 53 Internal Zone](https://github.com/rackspace-infrastructure-automation/aws-terraform-route53_internal_zone) | Needs Testing |
-| [S3](https://github.com/rackspace-infrastructure-automation/aws-terraform-s3) | Needs Testing |
-| [SNS](https://github.com/rackspace-infrastructure-automation/aws-terraform-sns) | Needs Testing |
-| [VPC Basenetwork](https://github.com/rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork) | Needs Testing |
+| Module Name  | Developed | Unit/Self-Contained Testing | Integration Testing | Ready for Customer Use | Notes |
+| --------------------- | ------------- |-|-|-|-|
+| [ALB](https://github.com/rackspace-infrastructure-automation/aws-terraform-alb) | :white_check_mark: | :x: | :x: | :x:  | n/a |
+| [Aurora](https://github.com/rackspace-infrastructure-automation/aws-terraform-aurora) | :white_check_mark: |  :x: | :x: | :x:  | n/a |
+| [Cloudfront w/ Custom Origin](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudfront_custom_origin) | :white_check_mark: |  :x: | :x: | :x:  | n/a |
+| [Cloudfront w/ S3 Origin](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudfront_s3_origin) | :white_check_mark: |  :x: | :x: | :x:  | n/a |
+| [EC2 ASG](https://github.com/rackspace-infrastructure-automation/aws-terraform-ec2_asg) | :white_check_mark: | :x: | :x: | :x:  | n/a |
+| [EC2 Autorecovery](https://github.com/rackspace-infrastructure-automation/aws-terraform-ec2_autorecovery) | :white_check_mark: | :x: | :x: | :x:  | n/a |
+| [ECS Cluster](https://github.com/rackspace-infrastructure-automation/aws-terraform-ecs_cluster) | :white_check_mark: | :x: | :x: | :x:  | n/a |
+| [RDS](https://github.com/rackspace-infrastructure-automation/aws-terraform-rds) | :white_check_mark: | :x: | :x: | :x:  | n/a |
+| [RMS](https://github.com/rackspace-infrastructure-automation/aws-terraform-rms) | :white_check_mark: | :x: | :x: | :x:  | n/a |
+| [Route 53 Internal Zone](https://github.com/rackspace-infrastructure-automation/aws-terraform-route53_internal_zone) | :white_check_mark: | :x: | :white_check_mark: | :x:  | n/a |
+| [S3](https://github.com/rackspace-infrastructure-automation/aws-terraform-s3) | :white_check_mark: | :x: | :white_check_mark: | :x: | n/a |
+| [SNS](https://github.com/rackspace-infrastructure-automation/aws-terraform-sns) | :x: | :x: | :x: | :x: | n/a |
+| [VPC Base Network](https://github.com/rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork) | :white_check_mark: | :x: | :white_check_mark: | :x: | n/a |
