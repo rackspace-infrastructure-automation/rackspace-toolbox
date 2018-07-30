@@ -7,13 +7,6 @@ jobs:
       - checkout
       - run: mkdir -p test/workspace
       - run: cp -pr repository_templates/bin bin
-      - run: mkdir layers && mv aviator/* layers/ # temporary module path
-      - run: mv layers aviator/layers
-      - run:
-          name: lint modules
-          command: cd aviator && ../bin/lint.sh
-      - run: mv aviator/layers layers # restore original module path
-      - run: mv layers/* aviator && rmdir layers
       - run:
           name: lint tests
           command: cd test && ../bin/lint.sh

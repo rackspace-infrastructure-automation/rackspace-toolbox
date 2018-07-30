@@ -3,22 +3,34 @@
 set -e
 
 WORKING_DIR=$(pwd)
-LAYERS_DIR="$WORKING_DIR/layers"
-LAYERS=$(find "$LAYERS_DIR"/* -type d -maxdepth 0 -exec basename '{}' \; | sort -n)
-
 OVERALL_RETURN=0
-for LAYER in $LAYERS; do
-  echo "terraform fmt $LAYER"
 
-  LINT_OUTPUT=$(cd "$LAYERS_DIR/$LAYER" && terraform fmt -check=true -write=false -diff=false -list=true)
-  LINT_RETURN=$?
+# Note: all echo statements will be broken once we run `terraform fmt` -- it
+# breaks something with stdout, as described here:
+# https://github.com/hashicorp/terraform/issues/16308
 
-  if [ $LINT_RETURN -ne 0 ]
+for LINT_TYPE in layers modules; do
+  LINT_DIR="$WORKING_DIR/$LINT_TYPE"
+  if [ ! -d "$LINT_DIR" ]
   then
-    echo "Linting failed in $LAYER, please run terraform fmt"
-    echo $LINT_OUTPUT
-    OVERALL_RETURN=1
+    continue
   fi
+
+  LINT_NAMES=$(find "$LINT_DIR"/* -type d -maxdepth 0 -exec basename '{}' \; | sort -n)
+
+  for N in $LINT_NAMES; do
+    echo "terraform fmt $N"
+
+    LINT_OUTPUT=$(cd "$LINT_DIR/$N" && terraform fmt -check=true -diff=false -write=false -list=true)
+    LINT_RETURN=$?
+
+    if [ $LINT_RETURN -ne 0 ]
+    then
+      echo "Linting failed in $LINT_DIR/$N, please run terraform fmt"
+      echo "$LINT_OUTPUT"
+      OVERALL_RETURN=1
+    fi
+  done
 done
 
 if [ $OVERALL_RETURN -ne 0 ]

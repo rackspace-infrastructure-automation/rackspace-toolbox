@@ -6,6 +6,14 @@ set -e
 WORKING_DIR=$(pwd)
 WORKSPACE_DIR="$WORKING_DIR/workspace"
 LAYERS_DIR="$WORKING_DIR/layers"
+
+if [ ! -d "$LAYERS_DIR" ]
+then
+  # don't apply anything if there's no layers directory, we're likely in the
+  # common repo here, and shouldn't be running Terraform at all.
+  exit
+fi
+
 LAYERS=$(find "$LAYERS_DIR"/* -type d -maxdepth 0 -exec basename '{}' \; | sort -n)
 
 # be sure we know about the latest remote refs
