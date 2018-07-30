@@ -18,12 +18,12 @@ resource "random_string" "sqs_rstring" {
 }
 
 resource "aws_sqs_queue" "my_sqs" {
-  name = "${random_string.sqs_rstring.result}-my-example-queue"
+  name = "my-example-queue-${random_string.sqs_rstring.result}"
 }
 
 module "sns_sqs" {
   source     = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns.git"
-  topic_name = "${random_string.sqs_rstring.result}-my-example-topic"
+  topic_name = "my-example-topic-${random_string.sqs_rstring.result}"
 
   create_subscription_1 = true
   protocol_1            = "sqs"
