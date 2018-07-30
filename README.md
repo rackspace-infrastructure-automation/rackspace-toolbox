@@ -32,5 +32,5 @@ Please reference the below list of statuses prior to using any linked modules on
 | [RMS](https://github.com/rackspace-infrastructure-automation/aws-terraform-rms) | :white_check_mark: | :x: | :x: | :x:  | n/a |
 | [Route 53 Internal Zone](https://github.com/rackspace-infrastructure-automation/aws-terraform-route53_internal_zone) | :white_check_mark: | :x: | :white_check_mark: | :x:  | n/a |
 | [S3](https://github.com/rackspace-infrastructure-automation/aws-terraform-s3) | :white_check_mark: | :x: | :white_check_mark: | :x: | n/a |
-| [SNS](https://github.com/rackspace-infrastructure-automation/aws-terraform-sns) | :white_check_mark: | :x: | :x: | :x: | n/a |
+| [SNS](https://github.com/rackspace-infrastructure-automation/aws-terraform-sns) | :x: | :x: | :x: | :x: | n/a |
 | [VPC Base Network](https://github.com/rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork) | :white_check_mark: | :x: | :white_check_mark: | :x: | n/a |
