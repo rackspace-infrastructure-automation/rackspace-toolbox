@@ -39,16 +39,9 @@ workflows:
   build_and_test:
     jobs:
       - plan
-      - hold:
-          type: approval
-          requires:
-           - plan
-          filters:
-            branches:
-             ignore: master
       - apply:
           requires:
-            - hold
+            - plan
           filters:
             branches:
-             ignore: master
+             only: master
