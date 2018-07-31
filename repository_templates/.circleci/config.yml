@@ -11,7 +11,10 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "01:23:45:67:89:10:11:12:13:14:15:16:17:18:19:20"
-      - run: bin/plan.sh
+      - run:
+          name: bin/plan.sh
+          command: bin/plan.sh
+          no_output_timeout: 20m
       - persist_to_workspace:
           root: workspace
           paths:
