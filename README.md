@@ -23,7 +23,7 @@ Please reference the below list of statuses prior to using any linked modules on
 | --------------------- | ------------- |-|-|-|-|
 | [ALB](https://github.com/rackspace-infrastructure-automation/aws-terraform-alb) | :white_check_mark: | :x: | :x: | :x:  | n/a |
 | [Aurora](https://github.com/rackspace-infrastructure-automation/aws-terraform-aurora) | :white_check_mark: |  :x: | :x: | :x:  | n/a |
-| [Cloudfront w/ Custom Origin](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudfront_custom_origin) | :white_check_mark: |  :x: | :x: | :x:  | n/a |
+| [Cloudfront w/ Custom Origin](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudfront_custom_origin) | :white_check_mark: |  :white_check_mark: | :x: | :x:  | n/a |
 | [Cloudfront w/ S3 Origin](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudfront_s3_origin) | :white_check_mark: |  :x: | :x: | :x:  | n/a |
 | [EC2 ASG](https://github.com/rackspace-infrastructure-automation/aws-terraform-ec2_asg) | :white_check_mark: | :x: | :x: | :x:  | n/a |
 | [EC2 Autorecovery](https://github.com/rackspace-infrastructure-automation/aws-terraform-ec2_autorecovery) | :white_check_mark: | :x: | :x: | :x:  | n/a |
@@ -33,4 +33,4 @@ Please reference the below list of statuses prior to using any linked modules on
 | [Route 53 Internal Zone](https://github.com/rackspace-infrastructure-automation/aws-terraform-route53_internal_zone) | :white_check_mark: | :x: | :white_check_mark: | :x:  | n/a |
 | [S3](https://github.com/rackspace-infrastructure-automation/aws-terraform-s3) | :white_check_mark: | :x: | :white_check_mark: | :x: | n/a |
 | [SNS](https://github.com/rackspace-infrastructure-automation/aws-terraform-sns) | :x: | :x: | :x: | :x: | n/a |
-| [VPC Base Network](https://github.com/rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork) | :white_check_mark: | :x: | :white_check_mark: | :x: | n/a |
+| [VPC Base Network](https://github.com/rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork) | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x: | n/a |
