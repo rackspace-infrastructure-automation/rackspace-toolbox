@@ -25,8 +25,8 @@ Please reference the below list of statuses prior to using any linked modules on
 | [Aurora](https://github.com/rackspace-infrastructure-automation/aws-terraform-aurora) | :white_check_mark: |  :x: | :x: | :x:  | n/a |
 | [Cloudfront w/ Custom Origin](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudfront_custom_origin) | :white_check_mark: |  :white_check_mark: | :white_check_mark: | :white_check_mark:  | n/a |
 | [Cloudfront w/ S3 Origin](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudfront_s3_origin) | :white_check_mark: |  :white_check_mark: | :white_check_mark: | :white_check_mark:  | n/a |
-| [EC2 ASG](https://github.com/rackspace-infrastructure-automation/aws-terraform-ec2_asg) | :white_check_mark: | :x: | :x: | :x:  | n/a |
-| [EC2 Autorecovery](https://github.com/rackspace-infrastructure-automation/aws-terraform-ec2_autorecovery) | :white_check_mark: | :x: | :x: | :x:  | n/a |
+| [EC2 ASG](https://github.com/rackspace-infrastructure-automation/aws-terraform-ec2_asg) | :white_check_mark: | :white_check_mark: | :x: | :x:  | n/a |
+| [EC2 Autorecovery](https://github.com/rackspace-infrastructure-automation/aws-terraform-ec2_autorecovery) | :white_check_mark: | :white_check_mark: | :x: | :x:  | n/a |
 | [ECS Cluster](https://github.com/rackspace-infrastructure-automation/aws-terraform-ecs_cluster) | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:  | n/a |
 | [IAM](https://github.com/rackspace-infrastructure-automation/aws-terraform-iam) | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:  | n/a |
 | [IAM Resources](https://github.com/rackspace-infrastructure-automation/aws-terraform-iam_resources) | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:  | n/a |
