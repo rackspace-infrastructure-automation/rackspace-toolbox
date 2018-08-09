@@ -18,7 +18,7 @@ provider "aws" {
 terraform {
   required_version = "0.11.7"
 
-  backend "s3"   {
+  backend "s3" {
     bucket  = "customer-environment-tfstate"
     key     = "terraform._main.tfstate"
     region  = "us-east-1"
@@ -48,3 +48,4 @@ module "terraform_circleci_iam" {
 #     aws = "aws.us-east-1"
 #   }
 # }
+
