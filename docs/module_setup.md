@@ -3,7 +3,7 @@
 This document outlines the steps required to connect CircleCI to a terraform module repo, and to add the required code to the repo for CI testing and usage examples.
 
 1. Copy the `.circleci` directory from [/module_templates/.circleci](../module_templates/.circleci).  This file should overwrite any existing .circleci configuration
-2. Copy latest bin scripts from [/repository_templates/bin](../repository_templates/bin) to the `.circleci/bin` directory of repo
+2. Copy latest bin scripts from [/repository_template/bin](../repository_template/bin) to the `.circleci/bin` directory of repo
 3. Create a `tests` directory with one subfolder per test required.  A sample can be found at [/module_templates/tests](../module_templates/tests).
     - When referencing the repo module in the tests. the source should be set to `"../../module"`.
 4. Create an `examples` directory to contain all necessary examples of module use [/module_templates/tests](../module_templates/tests).

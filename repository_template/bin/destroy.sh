@@ -1,26 +1,9 @@
 #!/bin/sh
 
 set -e
+source ./bin/variables.sh
 
-# standard paths
-WORKING_DIR=$(pwd)
-WORKSPACE_DIR="$WORKING_DIR/workspace"
-LAYERS_DIR="$WORKING_DIR/layers"
-
-if [ ! -d "$LAYERS_DIR" ]
-then
-  # don't apply anything if there's no layers directory, we're likely in the
-  # common repo here, and shouldn't be running Terraform at all.
-  exit
-fi
-
-if [ -f "$WORKSPACE_DIR/changed_layers" ]; then
-  LAYERS=$(cat "$WORKSPACE_DIR/changed_layers" | sort -nr)
-else
-  LAYERS=$(find "$LAYERS_DIR"/* -type d -maxdepth 0 -exec basename '{}' \; | sort -nr)
-fi
-
-for LAYER in $LAYERS; do
+for LAYER in $CHANGED_LAYERS; do
   # for debugging, show that these files exist
   ls -la "$LAYERS_DIR/$LAYER/terraform.tfstate"
 

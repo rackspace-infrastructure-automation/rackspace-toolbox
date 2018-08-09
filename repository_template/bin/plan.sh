@@ -1,11 +1,7 @@
 #!/bin/sh
 
 set -e
-
-# standard paths
-WORKING_DIR=$(pwd)
-WORKSPACE_DIR="$WORKING_DIR/workspace"
-LAYERS_DIR="$WORKING_DIR/layers"
+source ./bin/variables.sh
 
 if [ ! -d "$LAYERS_DIR" ]
 then
@@ -14,13 +10,7 @@ then
   exit
 fi
 
-if [ -f "$WORKSPACE_DIR/changed_layers" ]; then
-  LAYERS=$(cat "$WORKSPACE_DIR/changed_layers")
-else
-  LAYERS=$(find "$LAYERS_DIR"/* -type d -maxdepth 0 -exec basename '{}' \; | sort -n)
-fi
-
-for LAYER in $LAYERS; do
+for LAYER in $CHANGED_LAYERS; do
   echo "terraform init $LAYER"
   (cd "$LAYERS_DIR/$LAYER" && terraform init -input=false -no-color)
 

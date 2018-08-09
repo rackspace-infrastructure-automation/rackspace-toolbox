@@ -5,8 +5,6 @@ jobs:
       - image: hashicorp/terraform:0.11.7
     steps:
       - checkout
-      - run: mkdir -p workspace
-      - run: bin/check_master.sh
       - run: bin/lint.sh
       - add_ssh_keys:
           fingerprints:
@@ -30,7 +28,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: workspace
-      - run: bin/check_master.sh
       - add_ssh_keys:
           fingerprints:
             - "01:23:45:67:89:10:11:12:13:14:15:16:17:18:19:20"
