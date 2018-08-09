@@ -12,7 +12,7 @@ jobs:
       - run:
           name: bin/plan.sh
           command: bin/plan.sh
-          no_output_timeout: 20m
+          no_output_timeout: 20m # don't break if it takes a while to refresh/plan
       - persist_to_workspace:
           root: workspace
           paths:
