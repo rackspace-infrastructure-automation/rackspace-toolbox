@@ -11,5 +11,7 @@ provider "aws" {
 #
 #   source = "../../module"
 
+
 #   Module proerties defined
 # }
+

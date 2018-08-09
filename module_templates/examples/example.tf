@@ -13,5 +13,7 @@ provider "aws" {
 #
 #   source = "git@github.com:rackspace-infrastructure-automation/<MODULE>//?ref=<VERSION>"
 
+
 #   Module proerties defined
 # }
+

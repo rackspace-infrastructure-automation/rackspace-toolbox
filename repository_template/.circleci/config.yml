@@ -5,15 +5,14 @@ jobs:
       - image: hashicorp/terraform:0.11.7
     steps:
       - checkout
-      - run: mkdir -p workspace
-      - run: bin/check_master.sh
-      - run:
-          name: lint
-          command: bin/lint.sh
+      - run: bin/lint.sh
       - add_ssh_keys:
           fingerprints:
             - "01:23:45:67:89:10:11:12:13:14:15:16:17:18:19:20"
-      - run: bin/plan.sh
+      - run:
+          name: bin/plan.sh
+          command: bin/plan.sh
+          no_output_timeout: 20m # don't break if it takes a while to refresh/plan
       - persist_to_workspace:
           root: workspace
           paths:
@@ -27,12 +26,11 @@ jobs:
       - image: hashicorp/terraform:0.11.7
     steps:
       - checkout
-      - run: bin/check_master.sh
+      - attach_workspace:
+          at: workspace
       - add_ssh_keys:
           fingerprints:
             - "01:23:45:67:89:10:11:12:13:14:15:16:17:18:19:20"
-      - attach_workspace:
-          at: workspace
       - run: bin/apply.sh
 
 
@@ -41,16 +39,9 @@ workflows:
   build_and_test:
     jobs:
       - plan
-      - hold:
-          type: approval
-          requires:
-           - plan
-          filters:
-            branches:
-             ignore: master
       - apply:
           requires:
-            - hold
+            - plan
           filters:
             branches:
-             ignore: master
+             only: master

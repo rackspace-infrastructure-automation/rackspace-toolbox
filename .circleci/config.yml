@@ -5,27 +5,19 @@ jobs:
       - image: hashicorp/terraform:0.11.7
     steps:
       - checkout
-      - run: mkdir -p test/workspace
-      - run: cp -pr repository_templates/bin bin
-      - run: mkdir layers && mv aviator/* layers/ # temporary module path
-      - run: mv layers aviator/layers
-      - run:
-          name: lint modules
-          command: cd aviator && ../bin/lint.sh
-      - run: mv aviator/layers layers # restore original module path
-      - run: mv layers/* aviator && rmdir layers
+      - run: mv repository_template/bin test/bin
       - run:
           name: lint tests
-          command: cd test && ../bin/lint.sh
+          command: cd test && ./bin/lint.sh
       - run:
           name: plan
-          command: cd test && ../bin/plan.sh
+          command: cd test && ./bin/plan.sh
       - run:
           name: apply
-          command: cd test && ../bin/apply.sh || echo "apply failed."
+          command: cd test && ./bin/apply.sh || echo "apply failed."
       - run:
           name: destroy
-          command: cd test && ../bin/destroy.sh  # must succeed or we have something to clean up manually
+          command: cd test && ./bin/destroy.sh  # must succeed or we have something to clean up manually
 
 workflows:
   version: 2

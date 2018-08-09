@@ -1,18 +1,9 @@
 #!/bin/sh
 
 set -e
+source ./bin/variables.sh
 
-WORKING_DIR=$(pwd)
-WORKSPACE_DIR="$WORKING_DIR/workspace"
-LAYERS_DIR="$WORKING_DIR/layers"
-
-if [ -f "$WORKSPACE_DIR/changed_layers" ]; then
-  LAYERS=$(cat "$WORKSPACE_DIR/changed_layers" | sort -nr)
-else
-  LAYERS=$(find "$LAYERS_DIR"/* -type d -maxdepth 0 -exec basename '{}' \; | sort -nr)
-fi
-
-for LAYER in $LAYERS; do
+for LAYER in $CHANGED_LAYERS; do
   # for debugging, show that these files exist
   ls -la "$LAYERS_DIR/$LAYER/terraform.tfstate"
 

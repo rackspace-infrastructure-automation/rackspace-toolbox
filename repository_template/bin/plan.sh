@@ -1,18 +1,16 @@
 #!/bin/sh
 
 set -e
+source ./bin/variables.sh
 
-WORKING_DIR=$(pwd)
-WORKSPACE_DIR="$WORKING_DIR/workspace"
-LAYERS_DIR="$WORKING_DIR/layers"
-
-if [ -f "$WORKSPACE_DIR/changed_layers" ]; then
-  LAYERS=$(cat "$WORKSPACE_DIR/changed_layers")
-else
-  LAYERS=$(find "$LAYERS_DIR"/* -type d -maxdepth 0 -exec basename '{}' \; | sort -n)
+if [ ! -d "$LAYERS_DIR" ]
+then
+  # don't apply anything if there's no layers directory, we're likely in the
+  # common repo here, and shouldn't be running Terraform at all.
+  exit
 fi
 
-for LAYER in $LAYERS; do
+for LAYER in $CHANGED_LAYERS; do
   echo "terraform init $LAYER"
   (cd "$LAYERS_DIR/$LAYER" && terraform init -input=false -no-color)
 
