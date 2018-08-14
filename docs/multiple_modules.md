@@ -1,0 +1,4 @@
+# Multiple Modules
+In some cases, it may be necessary to have multiple modules in a single Terraform repo.  For example, there are numerous related IAM modules required, some with heavy dependencies to each other.
+
+When this condition is present, each of the individual modules should be placed into a `modules` directory at the root of the repo, and contain subfolders for each module.  For example, there are 3 modules required under the `aws-terraform-iam_resources` repository, `role`, `ssm_service_roles`, and `user_group`.  Those three modules are located at `module/role`, `module/ssm_service_roles`, and `module/user_group`.  In each module folder, examples of the module use should be present.  For example, the examples on the use of the `role` module should be placed at `module/role/examples`

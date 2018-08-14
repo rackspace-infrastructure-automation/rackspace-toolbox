@@ -34,3 +34,7 @@ Please reference the below list of statuses prior to using any linked modules on
 | [S3](https://github.com/rackspace-infrastructure-automation/aws-terraform-s3) | :white_check_mark: | :x: | :white_check_mark: | :x: | n/a |
 | [SNS](https://github.com/rackspace-infrastructure-automation/aws-terraform-sns) | :x: | :x: | :x: | :x: | n/a |
 | [VPC Base Network](https://github.com/rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork) | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x: | n/a |
+
+## Additional Documentation
+- [Initial Module Setup](docs/module_setup.md)
+- [Multiple Modules in a Repository](docs/multiple_modules.md)
