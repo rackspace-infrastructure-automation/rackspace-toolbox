@@ -2,7 +2,7 @@ version: 2
 jobs:
   plan:
     docker:
-      - image: hashicorp/terraform:0.11.7
+      - image: hashicorp/terraform:0.11.8
     steps:
       - checkout
       - run: bin/check_old.sh
@@ -24,7 +24,7 @@ jobs:
 
   apply:
     docker:
-      - image: hashicorp/terraform:0.11.7
+      - image: hashicorp/terraform:0.11.8
     steps:
       - checkout
       - attach_workspace:
