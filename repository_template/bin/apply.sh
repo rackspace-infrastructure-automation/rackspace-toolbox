@@ -1,7 +1,8 @@
 #!/bin/sh
 
 set -e
-source ./bin/variables.sh
+
+. $(dirname $(realpath $0))/variables.sh
 
 if [ ! -d "$LAYERS_DIR" ]
 then

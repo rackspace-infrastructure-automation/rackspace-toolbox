@@ -1,6 +1,7 @@
 #!/bin/sh
 
 set -e
-source ./bin/variables.sh
+
+. $(dirname $(realpath $0))/variables.sh
 
 terraform fmt -check

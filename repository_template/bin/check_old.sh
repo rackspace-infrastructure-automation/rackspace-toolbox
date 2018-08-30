@@ -1,7 +1,8 @@
 #!/bin/sh
 
 set -e
-source ./bin/variables.sh
+
+. $(dirname $(realpath $0))/variables.sh
 
 # be sure branch is up to date
 git fetch origin
