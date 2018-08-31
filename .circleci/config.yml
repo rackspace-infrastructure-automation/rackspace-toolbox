@@ -1,9 +1,6 @@
 version: 2
 jobs:
   build:
-    environment:
-      AWS_DEFAULT_REGION: us-west-2
-      ECR_ENDPOINT: 042423532529.dkr.ecr.us-west-2.amazonaws.com
     working_directory: /rackspace-toolbox
     docker:
       - image: docker:18.06.1-ce-git
@@ -14,21 +11,17 @@ jobs:
           name: Install dependencies
           command: |
             apk add --no-cache py-pip
-            pip install awscli
       - deploy:
           name: Build rackspace-toolbox
           command: |
             docker build -t rackspace-toolbox -f toolbox/Dockerfile .
-            $(aws ecr get-login --registry-ids 042423532529 --no-include-email)
-            docker tag rackspace-toolbox "$ECR_ENDPOINT/rackspace-toolbox:$CIRCLE_SHA1"
-            docker push "$ECR_ENDPOINT/rackspace-toolbox:$CIRCLE_SHA1"
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker tag rackspace-toolbox "j00k/rackspace-toolbox:$CIRCLE_SHA1"
+            docker push "j00k/rackspace-toolbox:$CIRCLE_SHA1"
 
   test_toolbox:
     docker:
-      - image: 042423532529.dkr.ecr.us-west-2.amazonaws.com/rackspace-toolbox:$CIRCLE_SHA1
-        aws_auth:
-          aws_access_key_id: $AWS_ACCESS_KEY_ID
-          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
+      - image: j00k/rackspace-toolbox:$CIRCLE_SHA1
     steps:
       - checkout
       - run:
@@ -42,7 +35,7 @@ jobs:
           command: cd test && apply.sh || echo "apply failed."
       - run:
           name: destroy
-          command: cd test && destroy.sh  # must succeed or we have something to clean up manually
+          command: cd test && destroy.sh
 
   test:
     docker:
