@@ -2,6 +2,10 @@
 
 set -e
 
+# master
+git fetch origin
+MASTER_REF=$(git rev-parse remotes/origin/master)
+
 # standard paths
 WORKING_DIR=$(pwd)
 
@@ -13,7 +17,7 @@ mkdir -p "$WORKSPACE_DIR"
 MODULES_DIR="$WORKING_DIR/modules"
 if [ -d "$MODULES_DIR" ]
 then
-  MODULES=$(find "$MODULES_DIR"/* -type d -maxdepth 0 -exec basename '{}' \; | sort -n)
+  MODULES=$(find "$MODULES_DIR"/* -maxdepth 0 -type d -exec basename '{}' \; | sort -n)
 
   echo "Modules found: "
   echo $MODULES
@@ -23,7 +27,7 @@ fi
 LAYERS_DIR="$WORKING_DIR/layers"
 if [ -d "$LAYERS_DIR" ]
 then
-  LAYERS=$(find "$LAYERS_DIR"/* -type d -maxdepth 0 -exec basename '{}' \; | sort -n)
+  LAYERS=$(find "$LAYERS_DIR"/* -maxdepth 0 -type d -exec basename '{}' \; | sort -n)
 
   echo "Layers found: "
   echo $LAYERS
