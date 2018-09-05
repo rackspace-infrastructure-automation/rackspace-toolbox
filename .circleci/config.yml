@@ -16,12 +16,12 @@ jobs:
           command: |
             docker build -t rackspace-toolbox -f toolbox/Dockerfile .
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker tag rackspace-toolbox "j00k/rackspace-toolbox:$CIRCLE_SHA1"
-            docker push "j00k/rackspace-toolbox:$CIRCLE_SHA1"
+            docker tag rackspace-toolbox "rackautomation/rackspace-toolbox:$CIRCLE_SHA1"
+            docker push "rackautomation/rackspace-toolbox:$CIRCLE_SHA1"
 
   test_toolbox:
     docker:
-      - image: j00k/rackspace-toolbox:$CIRCLE_SHA1
+      - image: rackautomation/rackspace-toolbox:$CIRCLE_SHA1
     steps:
       - checkout
       - run:
