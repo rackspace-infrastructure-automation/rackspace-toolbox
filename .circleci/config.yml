@@ -1,6 +1,8 @@
 version: 2
 jobs:
   build:
+    environment:
+      SUPPORTED_TF_VERSIONS: "0.11.8 0.11.7"
     working_directory: /rackspace-toolbox
     docker:
       - image: docker:18.06.1-ce-git
@@ -12,16 +14,34 @@ jobs:
           command: |
             apk add --no-cache py-pip
       - deploy:
-          name: Build rackspace-toolbox
+          name: Build rackspace-toolbox containers
           command: |
-            docker build -t rackspace-toolbox -f toolbox/Dockerfile .
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker tag rackspace-toolbox "rackautomation/rackspace-toolbox:$CIRCLE_SHA1"
-            docker push "rackautomation/rackspace-toolbox:$CIRCLE_SHA1"
+            echo $SUPPORTED_TF_VERSIONS | tr ' ' '\n' | xargs -I '{}' sh -c 'scripts/build_container.sh {}'
 
-  test_toolbox:
+  test_toolbox_0_11_7:
     docker:
-      - image: rackautomation/rackspace-toolbox:$CIRCLE_SHA1
+      - image: rackautomation/rackspace-toolbox:0.11.7-$CIRCLE_SHA1
+    steps:
+      - checkout
+      - run:
+          name: check old
+          command: cd test && check_old.sh
+      - run:
+          name: lint tests
+          command: cd test && lint.sh
+      - run:
+          name: plan
+          command: cd test && plan.sh
+      - run:
+          name: apply
+          command: cd test && apply.sh || echo "apply failed."
+      - run:
+          name: destroy
+          command: cd test && destroy.sh
+
+  test_toolbox_0_11_8:
+    docker:
+      - image: rackautomation/rackspace-toolbox:0.11.8-$CIRCLE_SHA1
     steps:
       - checkout
       - run:
@@ -64,7 +84,10 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - test_toolbox:
+      - test_toolbox_0_11_8:
+         requires:
+           - build
+      - test_toolbox_0_11_7:
          requires:
            - build
       - test:
