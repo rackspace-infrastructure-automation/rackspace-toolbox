@@ -2,10 +2,6 @@
 
 set -e
 
-# master
-git fetch origin
-MASTER_REF=$(git rev-parse remotes/origin/master)
-
 # standard paths
 WORKING_DIR=$(pwd)
 

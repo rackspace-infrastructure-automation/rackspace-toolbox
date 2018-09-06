@@ -2,6 +2,10 @@
 
 set -e
 
+# be sure branch is up to date
+git fetch origin
+MASTER_REF=$(git rev-parse remotes/origin/master)
+
 . $(dirname $(realpath $0))/variables.sh
 
 # in the last hundred commits, is one of the parents in the current master?

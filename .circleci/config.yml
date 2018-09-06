@@ -25,6 +25,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: check old
+          command: cd test && check_old.sh
+      - run:
           name: lint tests
           command: cd test && lint.sh
       - run:
