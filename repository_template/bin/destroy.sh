@@ -1,7 +1,8 @@
 #!/bin/sh
 
 set -e
-source ./bin/variables.sh
+
+. $(dirname $(realpath $0))/variables.sh
 
 for LAYER in $CHANGED_LAYERS; do
   # for debugging, show that these files exist
