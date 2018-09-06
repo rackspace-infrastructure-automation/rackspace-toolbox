@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  build_toolboxes:
     environment:
       SUPPORTED_TF_VERSIONS: "0.11.8 0.11.7"
     working_directory: /rackspace-toolbox
@@ -12,11 +12,11 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache py-pip
+            apk add --no-cache py-pip parallel
       - deploy:
           name: Build rackspace-toolbox containers
           command: |
-            echo $SUPPORTED_TF_VERSIONS | tr ' ' '\n' | xargs -I '{}' sh -c 'scripts/build_container.sh {}'
+            echo $SUPPORTED_TF_VERSIONS | tr ' ' '\n' | parallel --will-cite scripts/build_container.sh {}
 
   test_toolbox_0_11_7:
     docker:
@@ -83,13 +83,13 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build
+      - build_toolboxes
       - test_toolbox_0_11_8:
          requires:
-           - build
+           - build_toolboxes
       - test_toolbox_0_11_7:
          requires:
-           - build
+           - build_toolboxes
       - test:
           filters:
             branches:
