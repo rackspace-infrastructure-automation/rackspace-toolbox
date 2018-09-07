@@ -2,7 +2,7 @@ version: 2
 jobs:
   build_toolboxes:
     environment:
-      SUPPORTED_TF_VERSIONS: "0.11.8 0.11.7"
+      SUPPORTED_TF_VERSIONS: "0.11.8 0.11.7 0.11.4"
     working_directory: /rackspace-toolbox
     docker:
       - image: docker:18.06.1-ce-git
@@ -17,6 +17,27 @@ jobs:
           name: Build rackspace-toolbox containers
           command: |
             echo $SUPPORTED_TF_VERSIONS | tr ' ' '\n' | parallel --will-cite scripts/build_container.sh {}
+
+  test_toolbox_0_11_4:
+    docker:
+      - image: rackautomation/rackspace-toolbox:0.11.4-$CIRCLE_SHA1
+    steps:
+      - checkout
+      - run:
+          name: check old
+          command: cd test && check_old.sh
+      - run:
+          name: lint tests
+          command: cd test && lint.sh
+      - run:
+          name: plan
+          command: cd test && plan.sh
+      - run:
+          name: apply
+          command: cd test && apply.sh || echo "apply failed."
+      - run:
+          name: destroy
+          command: cd test && destroy.sh
 
   test_toolbox_0_11_7:
     docker:
