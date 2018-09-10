@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  build_toolbox:
     working_directory: /rackspace-toolbox
     docker:
       - image: docker:18.06.1-ce-git
@@ -12,11 +12,13 @@ jobs:
           command: |
             apk add --no-cache py-pip
       - deploy:
-          name: Build rackspace-toolbox
+          name: Build rackspace-toolbox containers
           command: |
-            docker build -t rackspace-toolbox -f toolbox/Dockerfile .
+            docker build -t rackspace-toolbox:$CIRCLE_SHA1 -f toolbox/Dockerfile .
+
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker tag rackspace-toolbox "rackautomation/rackspace-toolbox:$CIRCLE_SHA1"
+
+            docker tag rackspace-toolbox:$CIRCLE_SHA1 "rackautomation/rackspace-toolbox:$CIRCLE_SHA1"
             docker push "rackautomation/rackspace-toolbox:$CIRCLE_SHA1"
 
   test_toolbox:
@@ -63,10 +65,10 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build
+      - build_toolbox
       - test_toolbox:
          requires:
-           - build
+           - build_toolbox
       - test:
           filters:
             branches:
