@@ -1,7 +1,7 @@
 FROM alpine:3.8
 
 RUN apk --update add bash git openssh curl \
-  && wget https://github.com/Zordrak/tfenv/archive/v0.6.0.zip -O - | unzip -d /var/opt - \
+  && wget https://github.com/rackspace-infrastructure-automation/tfenv/archive/v0.6.0.zip -O - | unzip -d /var/opt - \
   && chmod +x /var/opt/tfenv-0.6.0/bin/* /var/opt/tfenv-0.6.0/libexec/* \
   && ln -s /var/opt/tfenv-0.6.0/bin/* /usr/local/bin
 
