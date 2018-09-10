@@ -4,4 +4,4 @@ set -e
 
 . $(dirname $(realpath $0))/variables.sh
 
-terraform fmt -check
+terraform fmt -check -diff
