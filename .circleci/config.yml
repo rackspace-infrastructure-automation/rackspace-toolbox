@@ -24,6 +24,9 @@ jobs:
   test_toolbox:
     docker:
       - image: rackautomation/rackspace-toolbox:$CIRCLE_SHA1
+    environment:
+      TF_STATE_BUCKET: test_harness # these don't have any effect since we don't
+      TF_STATE_REGION: test_harness # have any actual layers defined in the repo
     steps:
       - checkout
       - run:
