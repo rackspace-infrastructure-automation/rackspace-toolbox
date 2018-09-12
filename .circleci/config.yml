@@ -43,19 +43,6 @@ jobs:
           name: destroy
           command: cd test && destroy.sh
 
-  tag_latest:
-    docker:
-      - image: docker:18.06.1-ce-git
-    steps:
-      - setup_remote_docker
-      - deploy:
-          name: tag as latest
-          command: |
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker pull rackautomation/rackspace-toolbox:$CIRCLE_SHA1
-            docker tag rackautomation/rackspace-toolbox:$CIRCLE_SHA1 rackautomation/rackspace-toolbox:latest
-            docker push rackautomation/rackspace-toolbox:latest
-
   tag_master:
     docker:
       - image: docker:18.06.1-ce-git
@@ -81,6 +68,8 @@ jobs:
             docker pull rackautomation/rackspace-toolbox:$CIRCLE_SHA1
             docker tag rackautomation/rackspace-toolbox:$CIRCLE_SHA1 rackautomation/rackspace-toolbox:$CIRCLE_TAG
             docker push rackautomation/rackspace-toolbox:$CIRCLE_TAG
+            docker tag rackautomation/rackspace-toolbox:$CIRCLE_SHA1 rackautomation/rackspace-toolbox:latest
+            docker push rackautomation/rackspace-toolbox:latest
 
 workflows:
   version: 2
@@ -96,9 +85,6 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - tag_latest:
-          requires:
-            - test_toolbox
       - tag_master:
           requires:
             - test_toolbox
