@@ -14,7 +14,7 @@ fi
 
 for LAYER in $CHANGED_LAYERS; do
   echo "terraform init $LAYER"
-  (cd "$LAYERS_DIR/$LAYER" && terraform init -input=false -no-color)
+  (cd "$LAYERS_DIR/$LAYER" && terraform init -backend=true -backend-config="bucket=$TF_STATE_BUCKET" -backend-config="region=$TF_STATE_REGION" -backend-config="encrypt=true" -input=false -no-color)
 
   # cache .terraform during the plan
   (cd "$LAYERS_DIR/$LAYER" && tar -czf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz" .terraform)
