@@ -75,16 +75,10 @@ workflows:
   version: 2
   toolbox:
     jobs:
-      - build_toolbox:
-          filters:
-            tags:
-              only: /.*/
+      - build_toolbox
       - test_toolbox:
           requires:
             - build_toolbox
-          filters:
-            tags:
-              only: /.*/
       - tag_master:
           requires:
             - test_toolbox
@@ -93,8 +87,6 @@ workflows:
               only:
                 - master
       - tag_release:
-          requires:
-            - test_toolbox
           filters:
             tags:
               only:
