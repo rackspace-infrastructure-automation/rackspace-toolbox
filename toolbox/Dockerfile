@@ -1,9 +1,10 @@
 FROM alpine:3.8
 
-RUN apk --update add bash git openssh curl \
-  && wget https://github.com/rackspace-infrastructure-automation/tfenv/archive/v0.6.0.zip -O - | unzip -d /var/opt - \
+RUN apk --update add bash git openssh curl py-pip
+Run wget https://github.com/rackspace-infrastructure-automation/tfenv/archive/v0.6.0.zip -O - | unzip -d /var/opt - \
   && chmod +x /var/opt/tfenv-0.6.0/bin/* /var/opt/tfenv-0.6.0/libexec/* \
   && ln -s /var/opt/tfenv-0.6.0/bin/* /usr/local/bin
+RUN pip install --upgrade pip && pip install --progress-bar=off awscli
 
 RUN tfenv install 0.11.8
 RUN tfenv install 0.11.7

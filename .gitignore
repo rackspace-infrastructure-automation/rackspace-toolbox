@@ -1,6 +1,7 @@
 *.tfstate
 *.tfstate.backup
 .terraform/
+.cache/
 .DS_Store
 .idea/*
 *.tfvars
