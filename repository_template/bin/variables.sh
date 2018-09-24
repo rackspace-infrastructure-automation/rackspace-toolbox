@@ -15,8 +15,7 @@ mkdir -p "$WORKSPACE_DIR"
 
 # populate current module info
 MODULES_DIR="$WORKING_DIR/modules"
-if [ -d "$MODULES_DIR" ]
-then
+if [ -d "$MODULES_DIR" ]; then
   MODULES=$(find "$MODULES_DIR"/* -maxdepth 0 -type d -exec basename '{}' \; | sort -n)
 
   echo "Modules found: "
@@ -24,6 +23,7 @@ then
 fi
 
 find_changed_layers() {
+  echo "Comparing current git revision to: $1"
   git diff --name-only "$1" -- "$LAYERS_DIR" | awk -F "/" '{print $2}' | sort -n | uniq
 }
 
@@ -43,6 +43,7 @@ if [ -d "$LAYERS_DIR" ]; then
     GIT_BRANCH=${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
     if [ "$GIT_BRANCH" = 'master' ]; then
       if [ -z "$(aws s3 ls s3://${TF_STATE_BUCKET}/tf-applied-revision.sha)" ]; then
+        echo "No tf-applied-revision.sha file found in s3://${TF_STATE_BUCKET}. Considering all layers changed."
         CHANGED_LAYERS=$LAYERS
       else
         REVISION=${CIRCLE_SHA1:-$(git rev-parse HEAD)}
