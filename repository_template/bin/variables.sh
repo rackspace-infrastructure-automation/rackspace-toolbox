@@ -23,7 +23,7 @@ if [ -d "$MODULES_DIR" ]; then
 fi
 
 find_changed_layers() {
-  echo "Comparing current git revision to: $1"
+  echo >&2 "Comparing current git revision to: $1"
   git diff --name-only "$1" -- "$LAYERS_DIR" | awk -F "/" '{print $2}' | sort -n | uniq
 }
 
