@@ -37,8 +37,8 @@ jobs:
           name: plan
           command: cd test && plan.sh
       - run:
-          name: apply
-          command: cd test && apply.sh || echo apply failed.
+          name: apply - Please test in a new PR for https://github.com/rackspace-infrastructure-automation/969282-aws-751845724670-Phoenix-Sandbox-Do-Not-Delete/
+          command: 'cd test && apply.sh || echo "TODO: find a way  to test apply.sh"'
       - run:
           name: destroy
           command: cd test && destroy.sh
