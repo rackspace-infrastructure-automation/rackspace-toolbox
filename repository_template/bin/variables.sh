@@ -41,17 +41,16 @@ if [ -d "$LAYERS_DIR" ]; then
   else
     MASTER_REF=$(git rev-parse remotes/origin/master)
     GIT_BRANCH=${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
-    if [ "$GIT_BRANCH" = 'master' ]; then
-      if [ -z "$(aws s3 ls s3://${TF_STATE_BUCKET}/tf-applied-revision.sha)" ]; then
+    if [ -z "$(aws s3 ls s3://${TF_STATE_BUCKET}/tf-applied-revision.sha)" ]; then
+      if [ "$GIT_BRANCH" = 'master' ]; then
         echo "No tf-applied-revision.sha file found in s3://${TF_STATE_BUCKET}. Considering all layers changed."
         CHANGED_LAYERS=$LAYERS
       else
-        REVISION=${CIRCLE_SHA1:-$(git rev-parse HEAD)}
-        aws s3 cp "s3://${TF_STATE_BUCKET}/tf-applied-revision.sha" ./last-tf-applied-revision.sha > /dev/null
-        CHANGED_LAYERS=$(find_changed_layers "$(cat ./last-tf-applied-revision.sha)")
+        CHANGED_LAYERS=$(find_changed_layers "$MASTER_REF")
       fi
     else
-      CHANGED_LAYERS=$(find_changed_layers "$MASTER_REF")
+      aws s3 cp "s3://${TF_STATE_BUCKET}/tf-applied-revision.sha" ./last-tf-applied-revision.sha > /dev/null
+      CHANGED_LAYERS=$(find_changed_layers "$(cat ./last-tf-applied-revision.sha)")
     fi
     echo $CHANGED_LAYERS > "$WORKSPACE_DIR/changed_layers"
   fi
