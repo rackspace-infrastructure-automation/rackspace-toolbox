@@ -2,6 +2,16 @@
 
 set -e
 
+# be sure branch is up to date
+git fetch origin
+MASTER_REF=$(git rev-parse remotes/origin/master)
+
+# in the last hundred commits, is one of the parents in the current master?
+if ! (git log --pretty=format:'%H' -n 100 | grep -q "$MASTER_REF"); then
+  echo >&2 'Your branch is not up to date. Exiting.'
+  exit 1
+fi
+
 # standard paths
 WORKING_DIR=$(pwd)
 
@@ -39,7 +49,6 @@ if [ -d "$LAYERS_DIR" ]; then
   if [ -f "$WORKSPACE_DIR/changed_layers" ]; then
     CHANGED_LAYERS=$(cat "$WORKSPACE_DIR/changed_layers")
   else
-    MASTER_REF=$(git rev-parse remotes/origin/master)
     GIT_BRANCH=${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
     if [ -z "$(aws s3 ls s3://${TF_STATE_BUCKET}/tf-applied-revision.sha)" ]; then
       if [ "$GIT_BRANCH" = 'master' ]; then
