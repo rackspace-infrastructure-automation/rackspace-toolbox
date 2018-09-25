@@ -22,3 +22,8 @@ for LAYER in $CHANGED_LAYERS; do
   echo "terraform apply $LAYER"
   (cd "$LAYERS_DIR/$LAYER" && terraform apply -input=false -no-color "$WORKSPACE_DIR/terraform.$LAYER.plan")
 done
+
+# escrows applied revision
+REVISION=${CIRCLE_SHA1:-$(git rev-parse HEAD)}
+echo $REVISION > tf-applied-revision.sha
+aws s3 cp ./tf-applied-revision.sha "s3://${TF_STATE_BUCKET}/"
