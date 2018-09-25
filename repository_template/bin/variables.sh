@@ -41,7 +41,7 @@ if [ -d "$LAYERS_DIR" ]; then
     CHANGED_LAYERS=$(cat "$WORKSPACE_DIR/changed_layers")
   else
     GIT_BRANCH=${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
-    if [ -z "$(aws s3 ls s3://${TF_STATE_BUCKET}/tf-applied-revision.sha)" ]; then
+    if aws s3 ls s3://${TF_STATE_BUCKET}/tf-applied-revision.sha | grep -q tf-applied-revision.sha; then
       if [ "$GIT_BRANCH" = 'master' ]; then
         echo "No tf-applied-revision.sha file found in s3://${TF_STATE_BUCKET}. Considering all layers changed."
         CHANGED_LAYERS=$LAYERS
