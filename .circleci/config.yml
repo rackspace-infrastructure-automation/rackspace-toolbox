@@ -17,8 +17,8 @@ jobs:
             docker build -t rackautomation/rackspace-toolbox:$CIRCLE_SHA1 -f toolbox/Dockerfile .
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push rackautomation/rackspace-toolbox:$CIRCLE_SHA1
-            docker tag rackautomation/rackspace-toolbox:$CIRCLE_SHA1 rackautomation/rackspace-toolbox:${CIRCLE_BRANCH//\//_}
-            docker push rackautomation/rackspace-toolbox:${CIRCLE_BRANCH//\//_}
+            docker tag rackautomation/rackspace-toolbox:$CIRCLE_SHA1 rackautomation/rackspace-toolbox:branch_${CIRCLE_BRANCH//\//_}
+            docker push rackautomation/rackspace-toolbox:branch_${CIRCLE_BRANCH//\//_}
 
   test_toolbox:
     docker:
