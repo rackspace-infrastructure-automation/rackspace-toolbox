@@ -1,6 +1,27 @@
-#!/bin/sh
+#!/usr/bin/env sh
+set -eu
 
-set -e
+check_old() {
+  local fake_hostname='github.com.original.invalid'
+  # avoid overridden ssh config for github.com
+  if ! (ssh -G $fake_hostname | grep -q '^hostname github.com$'); then
+    echo "Host ${fake_hostname}" >> ~/.ssh/config
+    echo '  HostName github.com' >> ~/.ssh/config
+  fi
+
+  # be sure branch is up to date
+  git fetch --quiet --depth 100 $(git config --get remote.origin.url | sed "s/git@github.com:/git@${fake_hostname}:/")
+
+  # in the last hundred commits, is one of the parents in the current master?
+  if ! (git log --pretty=format:'%H' -n 100 | grep -q "$(git rev-parse remotes/origin/master)"); then
+    echo >&2 'Your branch is not up to date. Exiting...'
+    exit 1
+  else
+    echo 'Your branch is up to date. Proceeding...'
+  fi
+}
+
+check_old
 
 # standard paths
 MASTER_REF=$(git rev-parse remotes/origin/master)
