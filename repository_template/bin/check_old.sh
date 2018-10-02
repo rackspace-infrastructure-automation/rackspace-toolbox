@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -eu
+
 # avoid overridden ssh config for github.com
 if ! (ssh -G rackspace.github.com | grep -q '^hostname github.com$'); then
   echo 'Host rackspace.github.com' >> ~/.ssh/config
