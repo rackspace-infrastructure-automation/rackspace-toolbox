@@ -1,19 +1,5 @@
-#!/bin/sh
-
+#!/usr/bin/env sh
 set -eu
 
-# avoid overridden ssh config for github.com
-if ! (ssh -G rackspace.github.com | grep -q '^hostname github.com$'); then
-  echo 'Host rackspace.github.com' >> ~/.ssh/config
-  echo '  HostName github.com' >> ~/.ssh/config
-  echo '  IdentityFile ~/.ssh/id_rsa' >> ~/.ssh/config
-fi
-
-# be sure branch is up to date
-git fetch --depth 100 $(git config --get remote.origin.url | sed 's/git@github.com/git@rackspace.github.com/')
-
-# in the last hundred commits, is one of the parents in the current master?
-if ! (git log --pretty=format:'%H' -n 100 | grep -q "$(git rev-parse remotes/origin/master)"); then
-  echo >&2 'Your branch is not up to date. Exiting.'
-  exit 1
-fi
+echo >&2 'Calling check_old.sh explicitly ir not required anymore.'
+echo >&2 'Feel free remove it from your build pipeline.'

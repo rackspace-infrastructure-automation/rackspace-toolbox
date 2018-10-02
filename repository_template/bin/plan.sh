@@ -1,6 +1,5 @@
-#!/bin/sh
-
-set -e
+#!/usr/bin/env sh
+set -eu
 
 . $(dirname $(realpath $0))/variables.sh
 
