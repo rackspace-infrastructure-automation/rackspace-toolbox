@@ -2,7 +2,7 @@
 set -eu
 
 check_old() {
-  local fake_hostname='github.com.original.local'
+  local fake_hostname='github.com.original.invalid'
   # avoid overridden ssh config for github.com
   if ! (ssh -G $fake_hostname | grep -q '^hostname github.com$'); then
     echo "Host ${fake_hostname}" >> ~/.ssh/config
