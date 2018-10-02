@@ -2,7 +2,9 @@
 
 # avoid overridden ssh config for github.com
 if ! (ssh -G rackspace.github.com | grep -q '^hostname github.com$'); then
-  printf 'Host rackspace.github.com\n HostName github.com\n IdentityFile ~/.ssh/id_rsa' >> ~/.ssh/config
+  echo 'Host rackspace.github.com' >> ~/.ssh/config
+  echo '  HostName github.com' >> ~/.ssh/config
+  echo '  IdentityFile ~/.ssh/id_rsa' >> ~/.ssh/config
 fi
 
 # be sure branch is up to date
