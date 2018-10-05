@@ -24,16 +24,13 @@ jobs:
     docker:
       - image: rackautomation/rackspace-toolbox:$CIRCLE_SHA1
     environment:
-      TF_STATE_BUCKET: test_harness # these don't have any effect since we don't
-      TF_STATE_REGION: test_harness # have any actual layers defined in the repo
+      TF_STATE_BUCKET: test_harness
+      TF_STATE_REGION: test_harness
     steps:
       - checkout
       - run:
           name: disable automatic resolution of changed layers
           command: mkdir test/workspace && ls test/layers/ > test/workspace/changed_layers
-      - run:
-          name: check old
-          command: cd test && check_old.sh
       - run:
           name: lint tests
           command: cd test && lint.sh
@@ -69,11 +66,7 @@ jobs:
           name: tag an official release
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker pull rackautomation/rackspace-toolbox:$CIRCLE_SHA1
-            docker tag rackautomation/rackspace-toolbox:$CIRCLE_SHA1 rackautomation/rackspace-toolbox:$CIRCLE_TAG
-            docker push rackautomation/rackspace-toolbox:$CIRCLE_TAG
-            docker tag rackautomation/rackspace-toolbox:$CIRCLE_SHA1 rackautomation/rackspace-toolbox:latest
-            docker push rackautomation/rackspace-toolbox:latest
+            ./scripts/tag_release $CIRCLE_SHA1 $CIRCLE_TAG
 
 workflows:
   version: 2
