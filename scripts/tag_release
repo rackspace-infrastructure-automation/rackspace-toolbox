@@ -2,19 +2,19 @@
 set -eu
 
 tag_and_push() {
-  docker tag rackautomation/rackspace-toolbox:$GIT_SHA rackautomation/rackspace-toolbox:$1
-  docker push rackautomation/rackspace-toolbox:$1
+  docker tag "rackautomation/rackspace-toolbox:$GIT_SHA" "rackautomation/rackspace-toolbox:$1"
+  docker push "rackautomation/rackspace-toolbox:$1"
 }
 
-GIT_SHA=$1
-GIT_TAG=$2
+GIT_SHA="$1"
+GIT_TAG="$2"
 
-docker pull rackautomation/rackspace-toolbox:$GIT_SHA
+docker pull "rackautomation/rackspace-toolbox:$GIT_SHA"
 tag_and_push latest
 
 # major.minor.patch
-tag_and_push $GIT_TAG
+tag_and_push "$GIT_TAG"
 # major.minor
-tag_and_push $(echo $GIT_TAG | sed 's/[.][0-9]*$//')
+tag_and_push "$(echo "$GIT_TAG" | sed 's/[.][0-9]*$//')"
 # major
-tag_and_push $(echo $GIT_TAG | sed 's/[.][0-9]*[.][0-9]*$//')
+tag_and_push "$(echo "$GIT_TAG" | sed 's/[.][0-9]*[.][0-9]*$//')"
