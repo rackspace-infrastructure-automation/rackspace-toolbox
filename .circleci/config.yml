@@ -66,11 +66,7 @@ jobs:
           name: tag an official release
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker pull rackautomation/rackspace-toolbox:$CIRCLE_SHA1
-            docker tag rackautomation/rackspace-toolbox:$CIRCLE_SHA1 rackautomation/rackspace-toolbox:$CIRCLE_TAG
-            docker push rackautomation/rackspace-toolbox:$CIRCLE_TAG
-            docker tag rackautomation/rackspace-toolbox:$CIRCLE_SHA1 rackautomation/rackspace-toolbox:latest
-            docker push rackautomation/rackspace-toolbox:latest
+            ./scripts/tag_release $CIRCLE_SHA1 $CIRCLE_TAG
 
 workflows:
   version: 2
