@@ -37,3 +37,14 @@ push rackautomation/rackspace-toolbox:11')
   echo "$output"
   grep 'parameter not set' -- <(echo "$output")
 }
+
+@test "escape slashes" {
+  run ./scripts/tag_release fdfdfd branch_king/test/z
+  [ "$status" = 0 ]
+  diff <(echo "$output") <(echo \
+'pull rackautomation/rackspace-toolbox:fdfdfd
+tag rackautomation/rackspace-toolbox:fdfdfd rackautomation/rackspace-toolbox:latest
+push rackautomation/rackspace-toolbox:latest
+tag rackautomation/rackspace-toolbox:fdfdfd rackautomation/rackspace-toolbox:branch_king_test_z
+push rackautomation/rackspace-toolbox:branch_king_test_z')
+}
