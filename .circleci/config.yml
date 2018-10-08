@@ -17,8 +17,7 @@ jobs:
             docker build -t rackautomation/rackspace-toolbox:$CIRCLE_SHA1 -f toolbox/Dockerfile .
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push rackautomation/rackspace-toolbox:$CIRCLE_SHA1
-            docker tag rackautomation/rackspace-toolbox:$CIRCLE_SHA1 rackautomation/rackspace-toolbox:branch_${CIRCLE_BRANCH//\//_}
-            docker push rackautomation/rackspace-toolbox:branch_${CIRCLE_BRANCH//\//_}
+            ./scripts/tag_release $CIRCLE_SHA1 "branch_${CIRCLE_BRANCH}"
 
   test_toolbox:
     docker:
@@ -28,6 +27,12 @@ jobs:
       TF_STATE_REGION: test_harness
     steps:
       - checkout
+      - run:
+          name: BATS
+          command: |
+            git clone --depth 1 https://github.com/bats-core/bats-core.git /tmp/bats
+            /tmp/bats/install.sh /usr/local
+            bats ./tests/
       - run:
           name: disable automatic resolution of changed layers
           command: mkdir test/workspace && ls test/layers/ > test/workspace/changed_layers
@@ -48,19 +53,19 @@ jobs:
     docker:
       - image: docker:18.06.1-ce-git
     steps:
+      - checkout
       - setup_remote_docker
       - deploy:
           name: tag as master
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker pull rackautomation/rackspace-toolbox:$CIRCLE_SHA1
-            docker tag rackautomation/rackspace-toolbox:$CIRCLE_SHA1 rackautomation/rackspace-toolbox:master
-            docker push rackautomation/rackspace-toolbox:master
+            ./scripts/tag_release $CIRCLE_SHA1 master
 
   tag_release:
     docker:
       - image: docker:18.06.1-ce-git
     steps:
+      - checkout
       - setup_remote_docker
       - deploy:
           name: tag an official release
