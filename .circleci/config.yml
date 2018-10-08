@@ -67,6 +67,7 @@ jobs:
     docker:
       - image: docker:18.06.1-ce-git
     steps:
+      - checkout
       - setup_remote_docker
       - deploy:
           name: tag an official release
