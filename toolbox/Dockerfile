@@ -12,6 +12,6 @@ RUN tfenv install 0.11.4
 
 RUN tfenv use 0.11.8
 
-COPY repository_template/bin/* /var/opt/rackspace/bin/
+COPY ./bin/* /var/opt/rackspace/bin/
 RUN ln -s /var/opt/rackspace/bin/* /usr/local/bin/
 WORKDIR /rackspace

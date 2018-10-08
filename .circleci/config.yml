@@ -14,7 +14,7 @@ jobs:
       - deploy:
           name: Build rackspace-toolbox containers
           command: |
-            docker build -t rackautomation/rackspace-toolbox:$CIRCLE_SHA1 -f toolbox/Dockerfile .
+            docker build -t rackautomation/rackspace-toolbox:$CIRCLE_SHA1 ./toolbox/
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push rackautomation/rackspace-toolbox:$CIRCLE_SHA1
             ./scripts/tag_release $CIRCLE_SHA1 "branch_${CIRCLE_BRANCH}"
