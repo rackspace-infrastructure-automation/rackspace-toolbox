@@ -28,11 +28,11 @@ jobs:
     steps:
       - checkout
       - run:
-        name: BATS
-        command: |
-          git clone --depth 1 https://github.com/bats-core/bats-core.git /tmp/bats
-          /tmp/bats/install.sh /usr/local
-          bats ./tests/
+          name: BATS
+          command: |
+            git clone --depth 1 https://github.com/bats-core/bats-core.git /tmp/bats
+            /tmp/bats/install.sh /usr/local
+            bats ./tests/
       - run:
           name: disable automatic resolution of changed layers
           command: mkdir test/workspace && ls test/layers/ > test/workspace/changed_layers
