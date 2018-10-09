@@ -47,6 +47,7 @@ mkdir -p "$WORKSPACE_DIR"
 
 # populate current module info
 MODULES_DIR="$WORKING_DIR/modules"
+MODULES=''
 if [ -d "$MODULES_DIR" ]; then
   MODULES=$(find "$MODULES_DIR"/* -maxdepth 0 -type d -exec basename '{}' \; | sort -n)
 
@@ -61,6 +62,7 @@ find_changed_layers() {
 
 # populate current layer info
 LAYERS_DIR="$WORKING_DIR/layers"
+LAYERS=''
 if [ -d "$LAYERS_DIR" ]; then
   LAYERS=$(find "$LAYERS_DIR"/* -maxdepth 0 -type d -exec basename '{}' \; | sort -n)
 

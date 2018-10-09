@@ -10,6 +10,7 @@ function setup() {
   mkdir -p $bin_path
   echo 'echo $@' > $bin_docker
   chmod +x $bin_docker
+  rm -rf test/workspace
 }
 
 function teardown() {
@@ -19,14 +20,13 @@ function teardown() {
 }
 
 @test "uses cached workspace/changed_layers file" {
-  rm -rf test/workspace
   mkdir -p test/workspace
   echo layer_one > test/workspace/changed_layers
   echo layer_two >> test/workspace/changed_layers
 
   cd ./test
   source variables.sh
-  diff <(echo "$CHANGED_LAYERS") <(echo \
-'layer_one
-layer_two')
+  diff <(echo "$CHANGED_LAYERS") <(printf 'layer_one\nlayer_two\n')
+  diff <(echo "$LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
+  diff <(echo "$MODULES") <(echo '')
 }
