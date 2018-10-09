@@ -23,6 +23,8 @@ function setup() {
   git commit -q -m "initial commit"
   git clone -q "$(pwd)" ../cloned_infra
   cd ../cloned_infra
+  git config --local user.email "test@example.com"
+  git config --local user.name "test"
 
   unset MASTER_REF LAYERS MODULES CHANGED_LAYERS GIT_BRANCH
   unset LAYERS_DIR MODULES_DIR WORKING_DIR WORKSPACE_DIR
@@ -46,22 +48,30 @@ function teardown() {
   diff <(echo "$CHANGED_LAYERS") <(printf 'layer_one\nlayer_two\n')
 }
 
-@test "no changed layers when there is no tf-applied-revision.sha and not on master" {
+@test "when no tf-applied-revision.sha, on branch, with no diff from master => no changed layers" {
   echo 'echo' > $bin_aws # aws s3 ls => empty
   CIRCLE_BRANCH='not-master'
 
   source variables.sh
-  diff <(echo "$LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
-  diff <(echo "$MODULES") <(echo 'shared_code')
   diff <(echo "$CHANGED_LAYERS") <(echo '')
 }
 
-@test "considers all layers changed when there is no tf-applied-revision.sha and on master" {
+@test "when no tf-applied-revision.sha, on master => all layers changed " {
   echo 'echo' > $bin_aws # aws s3 ls => empty
   CIRCLE_BRANCH='master'
 
   source variables.sh
-  diff <(echo "$LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
-  diff <(echo "$MODULES") <(echo 'shared_code')
   diff <(echo "$CHANGED_LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
+}
+
+@test "when no tf-applied-revision.sha, on branch, with change => one changed layer" {
+  echo 'echo' > $bin_aws # aws s3 ls => empty
+  CIRCLE_BRANCH='not-master'
+
+  echo '# change' >> ./layers/base_network/main.tf
+  git add .
+  git commit -m "a change"
+
+  source variables.sh
+  diff <(echo "$CHANGED_LAYERS") <(echo 'base_network')
 }
