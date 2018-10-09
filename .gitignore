@@ -7,4 +7,4 @@
 *.tfvars
 *.plan
 /drun
-/test/workspace/
+/test_infra/workspace/
