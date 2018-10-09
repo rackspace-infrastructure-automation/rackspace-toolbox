@@ -6,3 +6,5 @@
 .idea/*
 *.tfvars
 *.plan
+/drun
+/test_infra/workspace/

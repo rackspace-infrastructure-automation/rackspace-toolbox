@@ -5,8 +5,8 @@ check_old() {
   local fake_hostname='github.com.original.invalid'
   # avoid overridden ssh config for github.com
   if ! (ssh -G $fake_hostname | grep -q '^hostname github.com$'); then
-    echo "Host ${fake_hostname}" >> ~/.ssh/config
-    echo '  HostName github.com' >> ~/.ssh/config
+    echo "Host ${fake_hostname}" >> /etc/ssh/ssh_config
+    echo '  HostName github.com' >> /etc/ssh/ssh_config
   fi
 
   # be sure branch is up to date
@@ -37,6 +37,7 @@ mkdir -p "$WORKSPACE_DIR"
 
 # populate current module info
 MODULES_DIR="$WORKING_DIR/modules"
+MODULES=''
 if [ -d "$MODULES_DIR" ]; then
   MODULES=$(find "$MODULES_DIR"/* -maxdepth 0 -type d -exec basename '{}' \; | sort -n)
 
@@ -51,6 +52,7 @@ find_changed_layers() {
 
 # populate current layer info
 LAYERS_DIR="$WORKING_DIR/layers"
+LAYERS=''
 if [ -d "$LAYERS_DIR" ]; then
   LAYERS=$(find "$LAYERS_DIR"/* -maxdepth 0 -type d -exec basename '{}' \; | sort -n)
 
@@ -62,7 +64,7 @@ if [ -d "$LAYERS_DIR" ]; then
     CHANGED_LAYERS=$(cat "$WORKSPACE_DIR/changed_layers")
   else
     GIT_BRANCH=${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
-    if aws s3 ls s3://${TF_STATE_BUCKET}/tf-applied-revision.sha | grep -q tf-applied-revision.sha; then
+    if ! aws s3 ls s3://${TF_STATE_BUCKET}/tf-applied-revision.sha | grep -q tf-applied-revision.sha; then
       if [ "$GIT_BRANCH" = 'master' ]; then
         echo "No tf-applied-revision.sha file found in s3://${TF_STATE_BUCKET}. Considering all layers changed."
         CHANGED_LAYERS=$LAYERS

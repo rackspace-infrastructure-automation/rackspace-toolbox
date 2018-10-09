@@ -14,7 +14,7 @@ jobs:
       - deploy:
           name: Build rackspace-toolbox containers
           command: |
-            docker build -t rackautomation/rackspace-toolbox:$CIRCLE_SHA1 -f toolbox/Dockerfile .
+            docker build -t rackautomation/rackspace-toolbox:$CIRCLE_SHA1 ./toolbox/
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push rackautomation/rackspace-toolbox:$CIRCLE_SHA1
             ./scripts/tag_release $CIRCLE_SHA1 "branch_${CIRCLE_BRANCH}"
@@ -35,19 +35,7 @@ jobs:
             bats ./tests/
       - run:
           name: disable automatic resolution of changed layers
-          command: mkdir test/workspace && ls test/layers/ > test/workspace/changed_layers
-      - run:
-          name: lint tests
-          command: cd test && lint.sh
-      - run:
-          name: plan - Please test in a new PR for https://github.com/rackspace-infrastructure-automation/969282-aws-751845724670-Phoenix-Sandbox-Do-Not-Delete/
-          command: 'cd test && plan.sh || echo "TODO: find a way to test plan and apply"'
-      - run:
-          name: apply - Please test in a new PR for https://github.com/rackspace-infrastructure-automation/969282-aws-751845724670-Phoenix-Sandbox-Do-Not-Delete/
-          command: 'cd test && apply.sh || echo "TODO: find a way to test plan and apply"'
-      - run:
-          name: destroy
-          command: cd test && destroy.sh || echo "TODO"
+          command: mkdir test_infra/workspace && ls test_infra/layers/ > test_infra/workspace/changed_layers
 
   tag_master:
     docker:

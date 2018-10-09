@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+set -eu
+
+if [ ! -x './drun' ] || [ './drun' -ot "$0" ]; then
+  echo 'drun not found or looks old. Downloading it now...'
+  DRUN_VERSION=${DRUN_VERSION:-1.4.0}
+  curl -sSLf "https://github.com/jpbochi/drun/archive/v${DRUN_VERSION}.tar.gz" | tar -zxf - --strip-components=1 "drun-$DRUN_VERSION/drun"
+  touch './drun'
+fi

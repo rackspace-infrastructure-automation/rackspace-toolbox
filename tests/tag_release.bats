@@ -17,6 +17,8 @@ function teardown() {
 
 @test "tags and pushes images" {
   run ./scripts/tag_release fdfdfd 11.22.33
+  echo ">> output:"
+  echo "$output"
   [ "$status" = 0 ]
   diff <(echo "$output") <(echo \
 'pull rackautomation/rackspace-toolbox:fdfdfd
@@ -32,14 +34,16 @@ push rackautomation/rackspace-toolbox:11')
 
 @test "requires two args" {
   run ./scripts/tag_release fdfdfd
-  [ ! "$status" = 0 ]
   echo ">> output:"
   echo "$output"
+  [ ! "$status" = 0 ]
   grep 'parameter not set' -- <(echo "$output")
 }
 
 @test "escape slashes" {
   run ./scripts/tag_release fdfdfd branch_king/test/z
+  echo ">> output:"
+  echo "$output"
   [ "$status" = 0 ]
   diff <(echo "$output") <(echo \
 'pull rackautomation/rackspace-toolbox:fdfdfd
