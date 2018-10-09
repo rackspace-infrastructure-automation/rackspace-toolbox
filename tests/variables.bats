@@ -106,3 +106,16 @@ function teardown() {
   source variables.sh
   diff <(echo "$CHANGED_LAYERS") <(echo 'base_network')
 }
+
+@test "with tf-applied-revision.sha, on branch, with deleted layer => includes deleted layer in changed list" {
+  echo 'if [ "$1 $2" = "s3 ls" ]; then echo tf-applied-revision.sha; fi' > $bin_aws
+  echo 'if [ "$1 $2" = "s3 cp" ]; then echo '"$(git rev-parse HEAD)"' > "$4"; fi' >> $bin_aws
+  CIRCLE_BRANCH='anybranch'
+
+  rm -r ./layers/base_network/
+  git add . && git commit -m "deletes base_network"
+  git push origin
+
+  source variables.sh
+  diff <(echo "$CHANGED_LAYERS") <(echo 'base_network')
+}
