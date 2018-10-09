@@ -3,13 +3,14 @@ set -eu
 
 bin_path='/fake-bin'
 bin_docker="$bin_path/docker"
+bin_aws="$bin_path/aws"
 PATH="$bin_path:$PATH"
 
 function setup() {
   cd $(git rev-parse --show-toplevel)
   mkdir -p $bin_path
-  echo 'echo $@' > $bin_docker
-  chmod +x $bin_docker
+  echo 'echo $@' > $bin_docker && chmod +x $bin_docker
+  echo 'echo $@' > $bin_aws && chmod +x $bin_aws
 
   tempdir=$(mktemp -d)
   cp -r ./test_infra "$tempdir"
@@ -41,11 +42,9 @@ function teardown() {
 
 @test "no changed layers" {
   mkdir -p ./workspace
-  echo layer_one > ./workspace/changed_layers
-  echo layer_two >> ./workspace/changed_layers
 
   source variables.sh
-  diff <(echo "$CHANGED_LAYERS") <(printf 'layer_one\nlayer_two\n')
+  diff <(echo "$CHANGED_LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
   diff <(echo "$LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
   diff <(echo "$MODULES") <(echo 'shared_code')
 }
