@@ -3,17 +3,11 @@ set -eu
 
 check_old() {
   local fake_hostname='github.com.original.invalid'
-  # local fake_hostname='github.com'
   # avoid overridden ssh config for github.com
   if ! (ssh -G $fake_hostname | grep -q '^hostname github.com$'); then
     echo "Host ${fake_hostname}" >> /etc/ssh/ssh_config
     echo '  HostName github.com' >> /etc/ssh/ssh_config
   fi
-
-  # ssh -G $fake_hostname
-  # head ~/.ssh/id_rsa
-  # ssh-keyscan $fake_hostname 2> /dev/null >> /etc/ssh/known_hosts
-  # ssh-keyscan github.com 2> /dev/null >> /etc/ssh/known_hosts
 
   # be sure branch is up to date
   git fetch --quiet --depth 100 $(git config --get remote.origin.url | sed "s/git@github.com:/git@${fake_hostname}:/")
@@ -26,10 +20,6 @@ check_old() {
     echo 'Your branch is up to date. Proceeding...'
   fi
 }
-
-# KEYS=$(ls -p ~/.ssh/ | grep -v -e '/' -e config -e known_hosts -e '.pub$' -e authorized_keys)
-# echo "$KEYS" | xargs -I % ssh-add ~/.ssh/%
-# ssh-keyscan github.com 2> /dev/null >> /etc/ssh/ssh_known_hosts
 
 check_old
 
