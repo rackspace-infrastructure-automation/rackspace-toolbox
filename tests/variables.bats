@@ -22,6 +22,7 @@ function setup() {
   git config --local user.name "test"
   git commit -q -m "initial commit"
   git clone -q "$(pwd)" ../cloned_infra
+  git checkout -b other-branch # necessary to allow the cloned repo to push here
   cd ../cloned_infra
   git config --local user.email "test@example.com"
   git config --local user.name "test"
@@ -48,7 +49,7 @@ function teardown() {
   diff <(echo "$CHANGED_LAYERS") <(printf 'layer_one\nlayer_two\n')
 }
 
-@test "when no tf-applied-revision.sha, on branch, with no diff from master => no changed layers" {
+@test "when no tf-applied-revision.sha, on branch, without change => no changed layers" {
   echo 'echo' > $bin_aws # aws s3 ls => empty
   CIRCLE_BRANCH='not-master'
 
@@ -69,9 +70,24 @@ function teardown() {
   CIRCLE_BRANCH='not-master'
 
   echo '# change' >> ./layers/base_network/main.tf
-  git add .
-  git commit -m "a change"
+  git add . && git commit -m "change base_network"
 
   source variables.sh
   diff <(echo "$CHANGED_LAYERS") <(echo 'base_network')
+}
+
+@test "with tf-applied-revision.sha, on branch, with unapplied changes => all changed layers since last apply" {
+  echo 'if [ "$1 $2" = "s3 ls" ]; then echo tf-applied-revision.sha; fi' > $bin_aws
+  echo 'if [ "$1 $2" = "s3 cp" ]; then echo '"$(git rev-parse HEAD)"' > "$4"; fi' >> $bin_aws
+  CIRCLE_BRANCH='anybranch'
+
+  echo '# change' >> ./layers/base_network/main.tf
+  git add . && git commit -m "change base_network"
+  git push origin
+
+  echo '# change' >> ./layers/route53_internal_zone/main.tf
+  git add . && git commit -m "change route53_internal_zone"
+
+  source variables.sh
+  diff <(echo "$CHANGED_LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
 }
