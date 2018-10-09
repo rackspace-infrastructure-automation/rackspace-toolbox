@@ -46,12 +46,22 @@ function teardown() {
   diff <(echo "$CHANGED_LAYERS") <(printf 'layer_one\nlayer_two\n')
 }
 
-@test "no changed layers" {
+@test "no changed layers when there is no tf-applied-revision.sha and not on master" {
+  echo 'echo' > $bin_aws # aws s3 ls => empty
   CIRCLE_BRANCH='not-master'
-  echo 'echo' > $bin_aws # fake S3 bucket to have no tf-applied-revision.sha
 
   source variables.sh
   diff <(echo "$LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
   diff <(echo "$MODULES") <(echo 'shared_code')
   diff <(echo "$CHANGED_LAYERS") <(echo '')
+}
+
+@test "considers all layers changed when there is no tf-applied-revision.sha and on master" {
+  echo 'echo' > $bin_aws # aws s3 ls => empty
+  CIRCLE_BRANCH='master'
+
+  source variables.sh
+  diff <(echo "$LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
+  diff <(echo "$MODULES") <(echo 'shared_code')
+  diff <(echo "$CHANGED_LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
 }
