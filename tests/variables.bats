@@ -91,3 +91,18 @@ function teardown() {
   source variables.sh
   diff <(echo "$CHANGED_LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
 }
+
+@test "with tf-applied-revision.sha, on branch, with reverted changes => all changed layers since last apply" {
+  echo 'if [ "$1 $2" = "s3 ls" ]; then echo tf-applied-revision.sha; fi' > $bin_aws
+  echo 'if [ "$1 $2" = "s3 cp" ]; then echo '"$(git rev-parse HEAD)"' > "$4"; fi' >> $bin_aws
+  CIRCLE_BRANCH='anybranch'
+
+  echo '# change' >> ./layers/base_network/main.tf
+  git add . && git commit -m "change base_network"
+  git push origin
+
+  git revert HEAD -n && git commit -m "revert"
+
+  source variables.sh
+  diff <(echo "$CHANGED_LAYERS") <(echo 'base_network')
+}
