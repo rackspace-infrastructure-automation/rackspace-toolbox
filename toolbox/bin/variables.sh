@@ -47,7 +47,7 @@ fi
 
 find_changed_layers() {
   echo >&2 "Comparing current git revision to: $1"
-  git diff --name-only "$1" -- "$LAYERS_DIR" | awk -F "/" '{print $2}' | sort -n | uniq
+  git log --pretty='' --name-only "$1..HEAD" -- "$LAYERS_DIR" | awk -F "/" '{print $2}' | sort -n | uniq
 }
 
 # populate current layer info
