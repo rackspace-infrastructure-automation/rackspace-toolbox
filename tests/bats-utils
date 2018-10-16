@@ -1,6 +1,13 @@
 #!/usr/bin/env sh
 set -eu
 
+function fake_command() {
+  for var in "$@"; do
+    mkdir -p "$(dirname "$var")"
+    echo 'echo $@' > "$var" && chmod +x "$var"
+  done
+}
+
 function setup_gitrepo() {
   tempdir=$(mktemp -d)
   cp -r ./test_infra "$tempdir"
@@ -15,4 +22,10 @@ function setup_gitrepo() {
   cd ../cloned_infra
   git config --local user.email "test@example.com"
   git config --local user.name "test"
+}
+
+function unset_vars() {
+  unset MASTER_REF LAYERS MODULES CHANGED_LAYERS GIT_BRANCH
+  unset LAYERS_DIR MODULES_DIR WORKING_DIR WORKSPACE_DIR
+  unset CIRCLE_BRANCH CIRCLE_SHA1
 }

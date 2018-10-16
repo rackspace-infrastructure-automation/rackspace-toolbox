@@ -8,3 +8,4 @@
 *.plan
 /drun
 /test_infra/workspace/
+/.terraform.d/

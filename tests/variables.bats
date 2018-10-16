@@ -10,21 +10,14 @@ source "$SOURCE_REPO/tests/bats-utils"
 
 function setup() {
   cd "$SOURCE_REPO"
-  mkdir -p $bin_path
-  echo 'echo $@' > $bin_docker && chmod +x $bin_docker
-  echo 'echo $@' > $bin_aws && chmod +x $bin_aws
-
+  fake_command "$bin_docker" "$bin_aws"
   setup_gitrepo
-
-  unset MASTER_REF LAYERS MODULES CHANGED_LAYERS GIT_BRANCH
-  unset LAYERS_DIR MODULES_DIR WORKING_DIR WORKSPACE_DIR
-  unset CIRCLE_BRANCH CIRCLE_SHA1
+  unset_vars
 }
 
 function teardown() {
   cd "$SOURCE_REPO"
-  rm $bin_docker
-  rm $bin_aws
+  rm "$bin_docker" "$bin_aws"
 }
 
 @test "uses cached workspace/changed_layers file" {

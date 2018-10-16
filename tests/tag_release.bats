@@ -4,15 +4,17 @@ set -eu
 bin_path='/fake-bin'
 bin_docker="$bin_path/docker"
 PATH="$bin_path:$PATH"
+SOURCE_REPO=$(git rev-parse --show-toplevel)
+source "$SOURCE_REPO/tests/bats-utils"
 
 function setup() {
-  mkdir -p $bin_path
-  echo 'echo $@' > $bin_docker
-  chmod +x $bin_docker
+  cd "$SOURCE_REPO"
+  fake_command "$bin_docker"
 }
 
 function teardown() {
-  rm $bin_docker
+  cd "$SOURCE_REPO"
+  rm "$bin_docker"
 }
 
 @test "tags and pushes images" {
