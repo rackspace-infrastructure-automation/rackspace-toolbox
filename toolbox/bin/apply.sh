@@ -11,6 +11,7 @@ then
 fi
 
 for LAYER in $CHANGED_LAYERS; do
+  echo "> Applying layer: $LAYER"
   # for debugging, show that these files exist
   ls -la "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz"
   ls -la "$WORKSPACE_DIR/terraform.$LAYER.plan"
@@ -18,7 +19,7 @@ for LAYER in $CHANGED_LAYERS; do
   # uncache .terraform for the apply
   (cd "$LAYERS_DIR/$LAYER" && tar xzf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz")
 
-  echo "terraform apply $LAYER"
+  echo "$ terraform apply"
   (cd "$LAYERS_DIR/$LAYER" && terraform apply -input=false -no-color "$WORKSPACE_DIR/terraform.$LAYER.plan")
 done
 
