@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+set -eu
+
+function setup_gitrepo() {
+  tempdir=$(mktemp -d)
+  cp -r ./test_infra "$tempdir"
+  cd "$tempdir/test_infra"
+  git init -q
+  git add .
+  git config --local user.email "test@example.com"
+  git config --local user.name "test"
+  git commit -q -m "initial commit"
+  git clone -q "$(pwd)" ../cloned_infra
+  git checkout -b other-branch # necessary to allow the cloned repo to push here
+  cd ../cloned_infra
+  git config --local user.email "test@example.com"
+  git config --local user.name "test"
+}
