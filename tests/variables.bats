@@ -6,36 +6,18 @@ bin_docker="$bin_path/docker"
 bin_aws="$bin_path/aws"
 PATH="$bin_path:$PATH"
 SOURCE_REPO=$(git rev-parse --show-toplevel)
+source "$SOURCE_REPO/tests/bats-utils"
 
 function setup() {
   cd "$SOURCE_REPO"
-  mkdir -p $bin_path
-  echo 'echo $@' > $bin_docker && chmod +x $bin_docker
-  echo 'echo $@' > $bin_aws && chmod +x $bin_aws
-
-  tempdir=$(mktemp -d)
-  cp -r ./test_infra "$tempdir"
-  cd "$tempdir/test_infra"
-  git init -q
-  git add .
-  git config --local user.email "test@example.com"
-  git config --local user.name "test"
-  git commit -q -m "initial commit"
-  git clone -q "$(pwd)" ../cloned_infra
-  git checkout -b other-branch # necessary to allow the cloned repo to push here
-  cd ../cloned_infra
-  git config --local user.email "test@example.com"
-  git config --local user.name "test"
-
-  unset MASTER_REF LAYERS MODULES CHANGED_LAYERS GIT_BRANCH
-  unset LAYERS_DIR MODULES_DIR WORKING_DIR WORKSPACE_DIR
-  unset CIRCLE_BRANCH CIRCLE_SHA1
+  fake_command "$bin_docker" "$bin_aws"
+  setup_gitrepo
+  unset_vars
 }
 
 function teardown() {
   cd "$SOURCE_REPO"
-  rm $bin_docker
-  rm $bin_aws
+  rm "$bin_docker" "$bin_aws"
 }
 
 @test "uses cached workspace/changed_layers file" {
