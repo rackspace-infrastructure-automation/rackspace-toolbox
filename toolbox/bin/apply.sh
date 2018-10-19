@@ -24,6 +24,6 @@ for LAYER in $CHANGED_LAYERS; do
 done
 
 # escrows applied revision
-REVISION=${CIRCLE_SHA1:-$(git rev-parse HEAD)}
-echo $REVISION > tf-applied-revision.sha
+REVISION="${CIRCLE_SHA1:-$(git rev-parse HEAD)}"
+echo "$REVISION" > tf-applied-revision.sha
 aws s3 cp ./tf-applied-revision.sha "s3://${TF_STATE_BUCKET}/"
