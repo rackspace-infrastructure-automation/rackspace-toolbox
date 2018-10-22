@@ -22,20 +22,15 @@ jobs:
   test_toolbox:
     docker:
       - image: rackautomation/rackspace-toolbox:$CIRCLE_SHA1
-    environment:
-      TF_STATE_BUCKET: test_harness
-      TF_STATE_REGION: test_harness
     steps:
       - checkout
       - run:
-          name: BATS
+          name: run tests
           command: |
             git clone --depth 1 https://github.com/bats-core/bats-core.git /tmp/bats
             /tmp/bats/install.sh /usr/local
-            time bats ./tests/
-      - run:
-          name: disable automatic resolution of changed layers
-          command: mkdir test_infra/workspace && ls test_infra/layers/ > test_infra/workspace/changed_layers
+            time bats -f '^[^@]' ./tests
+            time bats -f '@smoke' ./tests
 
   tag_master:
     docker:

@@ -1,9 +1,10 @@
 #!/usr/bin/env sh
 set -eu
 
+
 IMAGE=$(docker build -q -f toolbox/Dockerfile.tests ./toolbox/)
 
-if [ "${1-}" = 'bash' ]; then CMD='bash'; else CMD="bats ./tests"; fi
+if [ "${1-}" = 'bash' ]; then CMD='bash'; else CMD='time bats ./tests'; fi
 
 ./scripts/install-drun
 ./drun \
