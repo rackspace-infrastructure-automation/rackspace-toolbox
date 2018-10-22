@@ -32,7 +32,7 @@ jobs:
           command: |
             git clone --depth 1 https://github.com/bats-core/bats-core.git /tmp/bats
             /tmp/bats/install.sh /usr/local
-            bats ./tests/
+            time bats ./tests/
       - run:
           name: disable automatic resolution of changed layers
           command: mkdir test_infra/workspace && ls test_infra/layers/ > test_infra/workspace/changed_layers

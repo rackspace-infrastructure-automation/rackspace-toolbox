@@ -24,7 +24,7 @@ function teardown() {
 
 @test "inits and plan" {
   mkdir -p ./workspace
-  ls ./layers/ > ./workspace/changed_layers
+  printf 'base_network\nroute53_internal_zone\n' > ./workspace/changed_layers
   TEST_LOCAL_REPO=$(pwd)
 
   echo '

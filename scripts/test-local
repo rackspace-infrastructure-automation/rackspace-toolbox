@@ -8,6 +8,6 @@ if [ "${1-}" = 'bash' ]; then CMD='bash'; else CMD="bats ./tests"; fi
 ./scripts/install-drun
 ./drun \
   -v "$HOME/.ssh:$(pwd)/.ssh:ro" \
-  -e TF_STATE_BUCKET='test-bucket' \
-  -e TF_STATE_REGION='test-region' \
+  -v "$HOME/.aws:$(pwd)/.aws:ro" \
+  -E '^AWS_|^USER$' \
   "$IMAGE" "$CMD"
