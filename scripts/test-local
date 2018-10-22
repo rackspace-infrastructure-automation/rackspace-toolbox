@@ -11,4 +11,4 @@ if [ "${1-}" = 'bash' ]; then CMD='bash'; else CMD='time bats ./tests'; fi
   -v "$HOME/.ssh:$(pwd)/.ssh:ro" \
   -v "$HOME/.aws:$(pwd)/.aws:ro" \
   -E '^AWS_|^USER$' \
-  "$IMAGE" "$CMD"
+  "$IMAGE" $CMD
