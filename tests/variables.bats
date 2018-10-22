@@ -26,7 +26,7 @@ function teardown() {
   echo layer_two >> ./workspace/changed_layers
 
   source variables.sh
-  diff <(echo "$LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
+  diff <(echo "$LAYERS") <(printf 'applicable\nbase_network\nroute53_internal_zone\n')
   diff <(echo "$MODULES") <(echo 'shared_code')
   diff <(echo "$CHANGED_LAYERS") <(printf 'layer_one\nlayer_two\n')
 }
@@ -39,12 +39,12 @@ function teardown() {
   diff <(echo "$CHANGED_LAYERS") <(echo '')
 }
 
-@test "when no tf-applied-revision.sha, on master => all layers changed " {
+@test "when no tf-applied-revision.sha, on master => all layers changed" {
   echo 'echo' > $bin_aws # aws s3 ls => empty
   CIRCLE_BRANCH='master'
 
   source variables.sh
-  diff <(echo "$CHANGED_LAYERS") <(printf 'base_network\nroute53_internal_zone\n')
+  diff <(echo "$CHANGED_LAYERS") <(printf 'applicable\nbase_network\nroute53_internal_zone\n')
 }
 
 @test "when no tf-applied-revision.sha, on branch, with change => one changed layer" {

@@ -1,13 +1,14 @@
 #!/usr/bin/env sh
 set -eu
 
+
 IMAGE=$(docker build -q -f toolbox/Dockerfile.tests ./toolbox/)
 
-if [ "${1-}" = 'bash' ]; then CMD='bash'; else CMD="bats ./tests"; fi
+if [ "${1-}" = 'bash' ]; then CMD='bash'; else CMD='time bats ./tests'; fi
 
 ./scripts/install-drun
 ./drun \
   -v "$HOME/.ssh:$(pwd)/.ssh:ro" \
-  -e TF_STATE_BUCKET='test-bucket' \
-  -e TF_STATE_REGION='test-region' \
-  "$IMAGE" "$CMD"
+  -v "$HOME/.aws:$(pwd)/.aws:ro" \
+  -E '^AWS_|^USER$' \
+  "$IMAGE" $CMD
