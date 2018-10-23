@@ -6,6 +6,7 @@ Run wget https://github.com/rackspace-infrastructure-automation/tfenv/archive/v0
   && ln -s /var/opt/tfenv-0.6.0/bin/* /usr/local/bin
 RUN pip install --upgrade pip && pip install --progress-bar=off awscli
 
+RUN tfenv install 0.11.9
 RUN tfenv install 0.11.8
 RUN tfenv install 0.11.7
 RUN tfenv install 0.11.4
