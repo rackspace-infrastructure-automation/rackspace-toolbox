@@ -101,3 +101,18 @@ function teardown() {
   source variables.sh
   diff <(echo "$CHANGED_LAYERS") <(echo 'base_network')
 }
+
+@test "exits with 1 if TF_STATE_BUCKET and TF_STATE_REGION are not set but there are layers" {
+  unset TF_STATE_BUCKET
+  unset TF_STATE_REGION
+  run source variables.sh
+  [ "$status" = 1 ]
+}
+
+@test "does not exit if TF_STATE_BUCKET and TF_STATE_REGION are not set if there are no layers" {
+  unset TF_STATE_BUCKET
+  unset TF_STATE_REGION
+  rm -r layers
+  run source variables.sh
+  [ "$status" = 0 ]
+}
