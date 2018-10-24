@@ -31,10 +31,6 @@ WORKING_DIR=$(pwd)
 WORKSPACE_DIR="$WORKING_DIR/workspace"
 mkdir -p "$WORKSPACE_DIR"
 
-# TF_STATE_KEY naming standard: terraform.$LAYER.tfstate
-[ -z "$TF_STATE_BUCKET" ] && echo "Missing \$TF_STATE_BUCKET" && exit 1
-[ -z "$TF_STATE_REGION" ] && echo "Missing \$TF_STATE_REGION" && exit 1
-
 # populate current module info
 MODULES_DIR="$WORKING_DIR/modules"
 MODULES=''
@@ -54,6 +50,10 @@ find_changed_layers() {
 LAYERS_DIR="$WORKING_DIR/layers"
 LAYERS=''
 if [ -d "$LAYERS_DIR" ]; then
+  # TF_STATE_KEY naming standard: terraform.$LAYER.tfstate
+  [ -z "$TF_STATE_BUCKET" ] && echo "Missing \$TF_STATE_BUCKET" && exit 1
+  [ -z "$TF_STATE_REGION" ] && echo "Missing \$TF_STATE_REGION" && exit 1
+
   LAYERS=$(find "$LAYERS_DIR"/* -maxdepth 0 -type d -exec basename '{}' \; | sort -n)
 
   echo "Layers found: "
