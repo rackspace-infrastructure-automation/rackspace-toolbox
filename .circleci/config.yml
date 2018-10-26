@@ -30,9 +30,9 @@ jobs:
             git clone --depth 1 https://github.com/bats-core/bats-core.git /tmp/bats
             /tmp/bats/install.sh /usr/local
             time bats -f '^[^@]' ./tests
-            time bats -f '@smoke' ./tests
       - add_ssh_keys
       - run: pull-aws-creds.sh
+      - run: time bats -f '@smoke' ./tests
       - run: aws iam get-user
 
   tag_master:
