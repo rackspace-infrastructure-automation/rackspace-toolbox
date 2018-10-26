@@ -5,8 +5,8 @@ ARG JSON2HCL_VERSION=0.0.6
 ARG TUVOK_VERSION=v0.0.3
 
 # pre-reqs for toolbox & tuvok
-RUN apk --update add bash git openssh curl py-pip jq
-Run wget https://github.com/rackspace-infrastructure-automation/tfenv/archive/v0.6.0.zip -O - | unzip -d /var/opt - \
+RUN apk --update add bash git openssh openssl curl py-pip jq
+RUN wget https://github.com/rackspace-infrastructure-automation/tfenv/archive/v0.6.0.zip -O - | unzip -d /var/opt - \
   && chmod +x /var/opt/tfenv-0.6.0/bin/* /var/opt/tfenv-0.6.0/libexec/* \
   && ln -s /var/opt/tfenv-0.6.0/bin/* /usr/local/bin
 RUN pip install --upgrade pip && pip install --progress-bar=off awscli
