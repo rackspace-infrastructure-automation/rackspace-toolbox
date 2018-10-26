@@ -33,6 +33,7 @@ jobs:
             time bats -f '@smoke' ./tests
       - add_ssh_keys
       - run: pull-aws-creds.sh
+      - run: aws iam get-user
 
   tag_master:
     docker:

@@ -17,4 +17,4 @@ SIGNATURE=$(printf $MESSAGE | openssl dgst -sha256 -sign $ID_FILE | base64 | tr 
 ESCAPED_MESSAGE=$(printf $MESSAGE | sed 's/"/\\"/g')
 BASH_ENV=${BASH_ENV:-/dev/stdout}
 echo 'writing credentials to '$BASH_ENV
-curl -S --fail -XPOST -d "$MESSAGE" -H 'Content-Type: application/json' -H "x-phoenix-signature: $SIGNATURE" 'https://github.api.dev.manage.rackspace.com/v0/github' | tee -a "$BASH_ENV"
+curl -S --fail -XPOST -d "$MESSAGE" -H 'Content-Type: application/json' -H "x-phoenix-signature: $SIGNATURE" 'https://github.api.dev.manage.rackspace.com/v0/github' >> "$BASH_ENV"
