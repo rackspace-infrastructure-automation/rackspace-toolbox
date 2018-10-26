@@ -31,7 +31,8 @@ jobs:
             /tmp/bats/install.sh /usr/local
             time bats -f '^[^@]' ./tests
             time bats -f '@smoke' ./tests
-            pull-aws-creds.sh
+      - add_ssh_keys
+      - run: pull-aws-creds.sh
 
   tag_master:
     docker:
