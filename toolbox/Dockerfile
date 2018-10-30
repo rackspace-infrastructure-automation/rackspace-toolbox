@@ -6,8 +6,8 @@ Run wget https://github.com/rackspace-infrastructure-automation/tfenv/archive/v0
   && ln -s /var/opt/tfenv-0.6.0/bin/* /usr/local/bin
 RUN pip install --upgrade pip && pip install --progress-bar=off awscli
 
-ARG TUVOK_VERSION=0.0.1
-RUN wget https://github.com/rackerlabs/tuvok/archive/v$TUVOK_VERSION.zip -O /var/opt/tuvok.zip
+ARG TUVOK_VERSION=master
+RUN wget https://github.com/rackerlabs/tuvok/archive/$TUVOK_VERSION.zip -O /var/opt/tuvok.zip
 RUN unzip /var/opt/tuvok.zip -d /var/opt
 RUN cd /var/opt/tuvok-$TUVOK_VERSION && pip install -e .
 

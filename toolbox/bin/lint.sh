@@ -4,4 +4,4 @@ set -eu
 . $(dirname $(realpath $0))/variables.sh
 
 terraform fmt -check -diff
-tuvok --directory .
+tuvok . || exit 0 # don't fail builds yet
