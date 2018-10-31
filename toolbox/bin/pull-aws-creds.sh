@@ -9,7 +9,8 @@ echo >&2 '>>> signing with this identity file: '"$ID_FILE"' '"$FINGERPRINT"
 
 TIME=$(date +%s)
 REPO='rackspace-infrastructure-automation-dev/1013108-aws-260827023028-Phoenix-Sandbox-Do-Not-Delete'
-MESSAGE='{"awsAccountNumber":"260827023028","timestamp":"'"$TIME"'","repoName":"'"$REPO"'"}'
+BUCKET='playground-terraform-toolbox'
+MESSAGE='{"awsAccountNumber":"260827023028","timestamp":"'"$TIME"'","repoName":"'"$REPO"'","bucketName":"'"$BUCKET"'"}'
 echo '>>> sending: '"$MESSAGE"
 
 set -o pipefail
