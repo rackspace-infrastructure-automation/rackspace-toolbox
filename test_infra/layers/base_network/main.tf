@@ -17,14 +17,14 @@ resource "random_string" "vpc_name" {
 }
 
 module "base_network_all_defaults" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork.git"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork.git?ref=master"
 
   # all defaults
   vpc_name = "all_defaults-${random_string.vpc_name.result}"
 }
 
 module "base_network_override_azs" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork.git"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork.git?ref=master"
 
   vpc_name            = "override_azs-${random_string.vpc_name.result}"
   cidr_range          = "10.0.0.0/16"
