@@ -2,7 +2,7 @@ FROM python:3-alpine
 
 # versions to install
 ARG JSON2HCL_VERSION=0.0.6
-ARG TUVOK_VERSION=v0.0.2
+ARG TUVOK_VERSION=v0.0.3
 
 # pre-reqs for toolbox & tuvok
 RUN apk --update add bash git openssh curl py-pip jq
@@ -11,9 +11,9 @@ Run wget https://github.com/rackspace-infrastructure-automation/tfenv/archive/v0
   && ln -s /var/opt/tfenv-0.6.0/bin/* /usr/local/bin
 RUN pip install --upgrade pip && pip install --progress-bar=off awscli
 
-# tuvok and json2hcl
-ADD https://github.com/kvz/json2hcl/releases/download/v${JSON2HCL_VERSION}/json2hcl_v${JSON2HCL_VERSION}_linux_amd64 /json2hcl
-RUN chmod +x /json2hcl
+# tuvok and json2hcl, then run tuvok once to be sure it loads correctly
+ADD https://github.com/kvz/json2hcl/releases/download/v${JSON2HCL_VERSION}/json2hcl_v${JSON2HCL_VERSION}_linux_amd64 /usr/local/bin/json2hcl
+RUN chmod +x /usr/local/bin/json2hcl
 RUN pip install git+https://github.com/rackerlabs/tuvok.git@$TUVOK_VERSION
 
 # recent terraform versions

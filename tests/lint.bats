@@ -26,6 +26,7 @@ function teardown() {
   ls ./layers/ > ./workspace/changed_layers
 
   lint.sh
+  tuvok
 }
 
 @test "rejects invalid layer" {

@@ -22,14 +22,14 @@ resource "random_string" "zone_name" {
 }
 
 module "r53_default_vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork.git"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork.git?ref=master"
 
   # all defaults
   vpc_name = "r53_default_vpc-${random_string.vpc_name.result}"
 }
 
 module "r53_default_zone" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-route53_internal_zone.git"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-route53_internal_zone.git?ref=master"
 
   # all defaults
   zone_name     = "zone-${random_string.vpc_name.result}"
