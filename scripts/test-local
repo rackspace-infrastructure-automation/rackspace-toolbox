@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 set -eu
 
-IMAGE_CODE=$(docker build -q -f toolbox/Dockerfile ./toolbox/ -t rackspace-toolbox-test-local:latest)
+docker build -q -f toolbox/Dockerfile ./toolbox/ -t local/rackspace-toolbox:latest
 IMAGE_TEST=$(docker build -q -f toolbox/Dockerfile.tests ./toolbox/)
-CMD=${1:-"bats ./tests $@"}
+CMD=${1:-"bats ./tests"}
 
 ./scripts/install-drun
 ./drun \
