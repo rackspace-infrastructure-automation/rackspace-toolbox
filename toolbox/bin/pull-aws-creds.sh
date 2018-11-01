@@ -19,7 +19,7 @@ RESP_CODE=$(curl -sS -XPOST -d "$MESSAGE" \
   -H 'Accept: text/x-shellscript' -H 'Content-Type: application/json' \
   -H 'Authorization: Signature keyId="'"$FINGERPRINT"'",algorithm="rsa-sha256",signature="'"$SIGNATURE"'"' \
   -w '%{http_code}' -o "$TEMP_OUTPUT" \
-  'https://github.api.dev.manage.rackspace.com/v0/github/pull-aws-credentials')
+  'https://github.api.dev.manage.rackspace.com/v0/aws/credentials')
 
 if [ "$RESP_CODE" != '200' ]; then
   echo >&2 '>>> Request returned error: '"$RESP_CODE"
