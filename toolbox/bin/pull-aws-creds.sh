@@ -10,7 +10,7 @@ echo >&2 '>>> Request to be signed with: '"$ID_FILE"' '"$FINGERPRINT"
 
 REPO_FULL_NAME=${REPO_FULL_NAME:-$(git config --get remote.origin.url | sed 's/^git@github[.]com://' | sed 's/[.]git$//')}
 TIME=$(date +%s)
-MESSAGE='{"awsAccountNumber":"'"$TF_VAR_aws_account_id"'","timestamp":"'"$TIME"'","repoName":"'"$REPO_FULL_NAME"'","bucketName":"'"$TF_STATE_BUCKET"'"}'
+MESSAGE='{"awsAccountNumber":"'"$TF_VAR_aws_account_id"'","timestamp":"'"$TIME"'","repoName":"'"$REPO_FULL_NAME"'"}'
 echo '>>> Requesting credentials: '"$MESSAGE"
 
 set -o pipefail
