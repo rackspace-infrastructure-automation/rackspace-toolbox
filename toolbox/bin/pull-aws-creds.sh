@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 set -eu
 
+API_BASE="${API_BASE:-https://github.api.manage.rackspace.com}"
+
 ID_FILE=$(ssh -G git@github.com | grep identityfile | cut -d' ' -f2 | xargs -I % sh -c 'test -r % && echo % || true' | head)
 
 FINGERPRINT=$(ssh-keygen -E md5 -lf "$ID_FILE" | cut -f2 -d' ')
@@ -19,7 +21,7 @@ RESP_CODE=$(curl -sS -XPOST -d "$MESSAGE" \
   -H 'Accept: text/x-shellscript' -H 'Content-Type: application/json' \
   -H 'Authorization: Signature keyId="'"$FINGERPRINT"'",algorithm="rsa-sha256",signature="'"$SIGNATURE"'"' \
   -w '%{http_code}' -o "$TEMP_OUTPUT" \
-  'https://github.api.dev.manage.rackspace.com/v0/aws/credentials')
+  "${API_BASE}/v0/aws/credentials")
 
 if [ "$RESP_CODE" != '200' ]; then
   echo >&2 '>>> Request returned error: '"$RESP_CODE"

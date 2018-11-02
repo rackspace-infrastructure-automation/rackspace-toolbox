@@ -37,6 +37,7 @@ jobs:
             export TF_STATE_BUCKET='playground-terraform-toolbox'
             export TF_VAR_aws_account_id='260827023028'
             export REPO_FULL_NAME='rackspace-infrastructure-automation-dev/1013108-aws-260827023028-Phoenix-Sandbox-Do-Not-Delete'
+            export API_BASE='https://github.api.dev.manage.rackspace.com'
             pull-aws-creds.sh
       - run: time bats -f '@smoke' ./tests
       - run: aws iam get-user || true
