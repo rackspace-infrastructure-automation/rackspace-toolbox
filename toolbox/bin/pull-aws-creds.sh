@@ -8,9 +8,9 @@ ID_FILE=$(ssh -G git@github.com | grep identityfile | cut -d' ' -f2 | xargs -I %
 FINGERPRINT=$(ssh-keygen -E md5 -lf "$ID_FILE" | cut -f2 -d' ')
 echo >&2 '>>> Request to be signed with: '"$ID_FILE"' '"$FINGERPRINT"
 
-REPO_FULL_NAME=${REPO_FULL_NAME:-$(git config --get remote.origin.url | sed 's/^git@github[.]com://' | sed 's/[.]git$//')}
+REPO_NAME=${REPO_NAME:-$(git config --get remote.origin.url | sed -e 's/^git@github[.]com://' -e 's/^[^\/]*\///' -e 's/[.]git$//')}
 TIME=$(date +%s)
-MESSAGE='{"awsAccountNumber":"'"$TF_VAR_aws_account_id"'","timestamp":"'"$TIME"'","repoName":"'"$REPO_FULL_NAME"'"}'
+MESSAGE='{"awsAccountNumber":"'"$TF_VAR_aws_account_id"'","timestamp":"'"$TIME"'","repoName":"'"$REPO_NAME"'"}'
 echo '>>> Requesting credentials: '"$MESSAGE"
 
 set -o pipefail
