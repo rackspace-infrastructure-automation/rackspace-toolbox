@@ -34,7 +34,6 @@ jobs:
       - run:
           name: pull AWS credentials
           command: |
-            export TF_STATE_BUCKET='playground-terraform-toolbox'
             export TF_VAR_aws_account_id='260827023028'
             export REPO_NAME='1013108-aws-260827023028-Phoenix-Sandbox-Do-Not-Delete'
             export API_BASE='https://github.api.dev.manage.rackspace.com'
