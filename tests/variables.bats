@@ -116,3 +116,14 @@ function teardown() {
   run source variables.sh
   [ "$status" = 0 ]
 }
+
+@test "installs specific terraform successfully if it isn't already, using tfenv" {
+  cp .terraform-version{,.old} || echo "No .terraform-version existed"
+  echo "0.11.1" > .terraform-version
+  tfenv uninstall 0.11.1 || echo "v0.11.1 was not installed, didn't remove it"
+
+  run source variables.sh
+  terraform -version | grep -q v0.11.1
+  mv .terraform-version{.old,} || echo "Didn't restore .terraform-version"
+
+}
