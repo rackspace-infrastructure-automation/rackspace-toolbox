@@ -3,8 +3,7 @@ set -eu
 
 API_BASE="${API_BASE:-https://github.api.manage.rackspace.com}"
 
-KEY_FILE=${KEY_FILE:-$(ssh -G git@github.com | grep identityfile | cut -d' ' -f2 | xargs -I % sh -c 'test -r % && echo % || true' | head -n1)}
-
+KEY_FILE=${KEY_FILE:-"$HOME/.ssh/id_rsa"}
 FINGERPRINT=$(ssh-keygen -E md5 -lf "$KEY_FILE" | cut -f2 -d' ')
 echo >&2 '>>> Request to be signed with: '"$KEY_FILE"' '"$FINGERPRINT"
 
