@@ -6,11 +6,17 @@ set -eu
 if [ ! -d "$LAYERS_DIR" ]; then
   # don't apply anything if there's no layers directory, we're likely in the
   # common repo here, and shouldn't be running Terraform at all.
+  echo "> Not applying, no layers directory were found."
+  exit
+fi
+
+if [ -z "$CHANGED_LAYERS" ]; then
+  echo "> No changed layers to apply."
   exit
 fi
 
 if (aws configure list | grep access_key | grep -q '<not set>'); then
-  echo "> Fetching credentials..."
+  echo "> Fetching credentials"
   source pull-aws-creds.sh
 fi
 
