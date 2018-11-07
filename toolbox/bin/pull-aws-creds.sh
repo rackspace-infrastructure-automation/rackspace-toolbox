@@ -3,10 +3,10 @@ set -eu
 
 API_BASE="${API_BASE:-https://github.api.manage.rackspace.com}"
 
-ID_FILE=$(ssh -G git@github.com | grep identityfile | cut -d' ' -f2 | xargs -I % sh -c 'test -r % && echo % || true' | head -n1)
+KEY_FILE=${KEY_FILE:-$(ssh -G git@github.com | grep identityfile | cut -d' ' -f2 | xargs -I % sh -c 'test -r % && echo % || true' | head -n1)}
 
-FINGERPRINT=$(ssh-keygen -E md5 -lf "$ID_FILE" | cut -f2 -d' ')
-echo >&2 '>>> Request to be signed with: '"$ID_FILE"' '"$FINGERPRINT"
+FINGERPRINT=$(ssh-keygen -E md5 -lf "$KEY_FILE" | cut -f2 -d' ')
+echo >&2 '>>> Request to be signed with: '"$KEY_FILE"' '"$FINGERPRINT"
 
 REPO_NAME=${REPO_NAME:-$(git config --get remote.origin.url | sed -e 's/^git@github[.]com://' -e 's/^[^\/]*\///' -e 's/[.]git$//')}
 TIME=$(date +%s)
@@ -14,7 +14,7 @@ MESSAGE='{"awsAccountNumber":"'"$TF_VAR_aws_account_id"'","timestamp":"'"$TIME"'
 echo '>>> Requesting credentials: '"$MESSAGE"
 
 set -o pipefail
-SIGNATURE=$(printf $MESSAGE | openssl dgst -sha256 -sign $ID_FILE | base64 | tr -d '\n')
+SIGNATURE=$(printf $MESSAGE | openssl dgst -sha256 -sign $KEY_FILE | base64 | tr -d '\n')
 
 TEMP_OUTPUT=$(mktemp)
 RESP_CODE=$(curl -sS -XPOST -d "$MESSAGE" \
