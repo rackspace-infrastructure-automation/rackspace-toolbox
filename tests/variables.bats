@@ -122,6 +122,6 @@ function teardown() {
   echo "$TFENV_TEST_VERSION" > .terraform-version
   tfenv uninstall $TFENV_TEST_VERSION || echo "v$TFENV_TEST_VERSION was not installed, didn't remove it"
 
-  run source variables.sh
+  source variables.sh
   terraform -version | grep -q "v$TFENV_TEST_VERSION"
 }
