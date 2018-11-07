@@ -6,7 +6,6 @@ bin_docker="$bin_path/docker"
 bin_aws="$bin_path/aws"
 PATH="$bin_path:$PATH"
 SOURCE_REPO=$(git rev-parse --show-toplevel)
-TFENV_TEST_VERSION="0.11.1"
 source "$SOURCE_REPO/tests/bats-utils"
 
 function setup() {
@@ -119,6 +118,8 @@ function teardown() {
 }
 
 @test "installs specific terraform successfully if it isn't already, using tfenv" {
+  TFENV_TEST_VERSION="0.11.1"
+  
   echo "$TFENV_TEST_VERSION" > .terraform-version
   tfenv uninstall $TFENV_TEST_VERSION || echo "v$TFENV_TEST_VERSION was not installed, didn't remove it"
 
