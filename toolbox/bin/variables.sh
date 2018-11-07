@@ -46,6 +46,12 @@ find_changed_layers() {
   git log --pretty='' --name-only "$1..HEAD" -- "$LAYERS_DIR" | awk -F "/" '{print $2}' | sort -n | uniq
 }
 
+if [ -f .terraform-version ]; then
+  # ensure the right version of terraform is installed, even if the toolbox doesn't have it
+  echo "$ tfenv install"
+  tfenv install
+fi
+
 # populate current layer info
 LAYERS_DIR="$WORKING_DIR/layers"
 LAYERS=''

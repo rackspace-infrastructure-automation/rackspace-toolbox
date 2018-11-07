@@ -113,6 +113,15 @@ function teardown() {
   unset TF_STATE_BUCKET
   unset TF_STATE_REGION
   rm -r layers
-  run source variables.sh
-  [ "$status" = 0 ]
+  source variables.sh
+}
+
+@test "installs specific terraform successfully if it isn't already, using tfenv" {
+  TFENV_TEST_VERSION="0.11.1"
+
+  echo "$TFENV_TEST_VERSION" > .terraform-version
+  tfenv uninstall $TFENV_TEST_VERSION || echo "v$TFENV_TEST_VERSION was not installed, didn't remove it"
+
+  source variables.sh
+  terraform -version | grep -q "v$TFENV_TEST_VERSION"
 }
