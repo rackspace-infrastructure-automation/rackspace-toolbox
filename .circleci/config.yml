@@ -32,14 +32,10 @@ jobs:
             time bats -f '^[^@]' ./tests
       - add_ssh_keys
       - run:
-          name: pull AWS credentials
+          name: smoke tests pulling credentials and using state file on S3
           command: |
-            export TF_VAR_aws_account_id='260827023028'
-            export REPO_NAME='1013108-aws-260827023028-Phoenix-Sandbox-Do-Not-Delete'
-            export API_BASE='https://github.api.dev.manage.rackspace.com'
-            pull-aws-creds.sh
-      - run: time bats -f '@smoke' ./tests
-      - run: aws iam get-user || true
+            unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+            time bats -f '@smoke' ./tests
 
   tag_master:
     docker:

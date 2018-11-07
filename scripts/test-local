@@ -8,6 +8,5 @@ CMD=${1:-"bats ./tests"}
 ./scripts/install-drun
 ./drun \
   -v "$HOME/.ssh:$(pwd)/.ssh:ro" \
-  -v "$HOME/.aws:$(pwd)/.aws:ro" \
-  -E '^AWS_|^USER$' \
+  -E '^USER$' \
   "$IMAGE_TEST" $CMD

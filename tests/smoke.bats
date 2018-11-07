@@ -26,6 +26,10 @@ function teardown() {
   echo applicable > ./workspace/changed_layers
   sed -i=bak 's/<%=state_file_name%>/'"${expected_state_filename}/" ./layers/applicable/main.tf
 
+  export TF_VAR_aws_account_id='260827023028'
+  export API_BASE='https://github.api.dev.manage.rackspace.com'
+  export REPO_NAME='1013108-aws-260827023028-Phoenix-Sandbox-Do-Not-Delete'
+  export BASH_ENV='/dev/null'
   export TF_STATE_BUCKET="$expected_bucket"
   export TF_STATE_REGION='us-west-2'
   plan.sh
@@ -35,6 +39,7 @@ function teardown() {
   apply.sh
 
   echo "### ${expected_state_full_path}:"
+  BASH_ENV='/dev/null' source pull-aws-creds.sh
   aws s3 cp "${expected_state_full_path}" -
   diff <(aws s3 cp "s3://${expected_bucket}/tf-applied-revision.sha" -) <(echo "$expected_revision")
 }

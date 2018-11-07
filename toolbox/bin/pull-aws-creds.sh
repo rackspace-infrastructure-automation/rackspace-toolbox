@@ -33,3 +33,4 @@ fi
 OUTPUT=${BASH_ENV:-/dev/stdout}
 echo >&2 '>>> Writing response to: '"$OUTPUT"
 cat "$TEMP_OUTPUT" >> "$OUTPUT"
+source "$TEMP_OUTPUT"

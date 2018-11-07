@@ -3,12 +3,16 @@ set -eu
 
 . $(dirname $(realpath $0))/variables.sh
 
-if [ ! -d "$LAYERS_DIR" ]
-then
+if [ ! -d "$LAYERS_DIR" ]; then
   # don't apply anything if there's no layers directory, we're likely in the
   # common repo here, and shouldn't be running Terraform at all.
   echo "Not planning, no layers were found." > "$WORKSPACE_DIR/full_plan_output.log"
   exit
+fi
+
+if (aws configure list | grep access_key | grep -q '<not set>'); then
+  echo "> Fetching credentials..."
+  source pull-aws-creds.sh
 fi
 
 for LAYER in $CHANGED_LAYERS; do
