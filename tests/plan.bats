@@ -45,7 +45,6 @@ function teardown() {
   ' > $bin_terraform
 
   TF_STATE_BUCKET='le-bucket'
-  TF_STATE_REGION='le-region'
   plan.sh
 
   diff ./workspace/terraform.base_network.plan <(echo \

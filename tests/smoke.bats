@@ -27,7 +27,6 @@ function teardown() {
   sed -i=bak 's/<%=state_file_name%>/'"${expected_state_filename}/" ./layers/applicable/main.tf
 
   export TF_STATE_BUCKET="$expected_bucket"
-  export TF_STATE_REGION='us-west-2'
   plan.sh
 
   rm -r ./layers/applicable/.terraform # this directory gets lost in between CircleCI workflow steps

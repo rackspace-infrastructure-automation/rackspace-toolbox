@@ -29,5 +29,4 @@ function unset_vars() {
   unset LAYERS_DIR MODULES_DIR WORKING_DIR WORKSPACE_DIR
   unset CIRCLE_BRANCH CIRCLE_SHA1
   export TF_STATE_BUCKET='test-bucket'
-  export TF_STATE_REGION='test-region'
 }
