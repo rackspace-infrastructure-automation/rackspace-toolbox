@@ -30,6 +30,12 @@ jobs:
             git clone --depth 1 https://github.com/bats-core/bats-core.git /tmp/bats
             /tmp/bats/install.sh /usr/local
             time bats -f '^[^@]' ./tests
+      - add_ssh_keys
+      - run:
+          name: smoke tests pulling credentials and using state file on S3
+          command: |
+            unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+            export KEY_FILE=$(ssh -G git@github.com | grep identityfile | cut -d' ' -f2 | head -n1)
             time bats -f '@smoke' ./tests
 
   tag_master:

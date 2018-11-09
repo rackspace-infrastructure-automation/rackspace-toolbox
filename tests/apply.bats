@@ -58,6 +58,7 @@ init-data
 apply -input=false -no-color ${TEST_LOCAL_REPO}/workspace/terraform.base_network.plan")
 
   diff "$TEST_LOCAL_REPO/aws-output" <(echo \
-'s3 cp ./tf-applied-revision.sha s3://stateful-bucket/
+'configure list
+s3 cp ./tf-applied-revision.sha s3://stateful-bucket/
 aabbccbacbacbacbac')
 }
