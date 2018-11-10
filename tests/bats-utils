@@ -32,4 +32,6 @@ function unset_vars() {
   unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
   export TF_STATE_BUCKET='test-bucket'
   export TF_STATE_REGION='test-region'
+  export TF_STATE_BUCKET_V2='test-bucket-v2'
+  export TF_STATE_REGION_V2='test-region-v2'
 }

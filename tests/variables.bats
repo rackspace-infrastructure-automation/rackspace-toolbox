@@ -102,16 +102,36 @@ function teardown() {
   diff <(echo "$CHANGED_LAYERS") <(echo 'base_network')
 }
 
-@test "exits with 1 if TF_STATE_BUCKET and TF_STATE_REGION are not set but there are layers" {
+@test "sets TF_STATE_BUCKET to TF_STATE_BUCKET if TF_STATE_BUCKET is set" {
+  source variables.sh
+  [ "$TF_STATE_BUCKET" = "test-bucket" ]
+}
+
+@test "sets TF_STATE_REGION to TF_STATE_REGION if TF_STATE_REGION is set" {
+  source variables.sh
+  [ "$TF_STATE_REGION" = "test-region" ]
+}
+
+@test "sets TF_STATE_BUCKET to TF_STATE_BUCKET_V2 if TF_STATE_BUCKET is not set" {
   unset TF_STATE_BUCKET
+  source variables.sh
+  [ "$TF_STATE_BUCKET" = "test-bucket-v2" ]
+}
+
+@test "sets TF_STATE_REGION to TF_STATE_REGION_V2 if TF_STATE_REGION is not set" {
   unset TF_STATE_REGION
+  source variables.sh
+  [ "$TF_STATE_REGION" = "test-region-v2" ]
+}
+
+@test "exits with 1 if TF_STATE_BUCKET and TF_STATE_REGION and V2 are not set but there are layers" {
+  unset TF_STATE_BUCKET TF_STATE_BUCKET_V2 TF_STATE_REGION TF_STATE_REGION_V2
   run source variables.sh
   [ "$status" = 1 ]
 }
 
-@test "does not exit if TF_STATE_BUCKET and TF_STATE_REGION are not set if there are no layers" {
-  unset TF_STATE_BUCKET
-  unset TF_STATE_REGION
+@test "does not exit if TF_STATE_BUCKET and TF_STATE_REGION and V2 are not set if there are no layers" {
+  unset TF_STATE_BUCKET TF_STATE_BUCKET_V2 TF_STATE_REGION TF_STATE_REGION_V2
   rm -r layers
   source variables.sh
 }

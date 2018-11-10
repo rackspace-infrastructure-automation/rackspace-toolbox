@@ -56,6 +56,9 @@ fi
 LAYERS_DIR="$WORKING_DIR/layers"
 LAYERS=''
 if [ -d "$LAYERS_DIR" ]; then
+  TF_STATE_BUCKET="${TF_STATE_BUCKET:-$TF_STATE_BUCKET_V2}"
+  TF_STATE_REGION="${TF_STATE_REGION:-$TF_STATE_REGION_V2}"
+
   # TF_STATE_KEY naming standard: terraform.$LAYER.tfstate
   [ -z "$TF_STATE_BUCKET" ] && echo "Missing \$TF_STATE_BUCKET" && exit 1
   [ -z "$TF_STATE_REGION" ] && echo "Missing \$TF_STATE_REGION" && exit 1
