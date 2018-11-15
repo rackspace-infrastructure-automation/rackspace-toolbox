@@ -67,6 +67,12 @@ if [ -d "$LAYERS_DIR" ]; then
   echo "Layers found: "
   echo $LAYERS
 
+  # needs AWS credentials in order to look for tf-applied-revision.sha
+  if (aws configure list | grep access_key | grep -q '<not set>'); then
+    echo "> Fetching credentials"
+    source pull-aws-creds.sh
+  fi
+
   # ensure we know about what layers haved changed
   if [ -f "$WORKSPACE_DIR/changed_layers" ]; then
     CHANGED_LAYERS=$(cat "$WORKSPACE_DIR/changed_layers")

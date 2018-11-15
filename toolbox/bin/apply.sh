@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 
-. $(dirname $(realpath $0))/variables.sh
+source $(dirname $(realpath $0))/variables.sh
 
 if [ ! -d "$LAYERS_DIR" ]; then
   # don't apply anything if there's no layers directory, we're likely in the
@@ -13,11 +13,6 @@ fi
 if [ -z "$CHANGED_LAYERS" ]; then
   echo "> No changed layers to apply."
   exit
-fi
-
-if (aws configure list | grep access_key | grep -q '<not set>'); then
-  echo "> Fetching credentials"
-  source pull-aws-creds.sh
 fi
 
 for LAYER in $CHANGED_LAYERS; do
