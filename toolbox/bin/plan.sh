@@ -17,16 +17,16 @@ fi
 
 for LAYER in $CHANGED_LAYERS; do
   echo "> Planning layer: $LAYER"
-  INIT_COMMAND="terraform init -backend=true -backend-config="bucket=$TF_STATE_BUCKET" -backend-config="region=$TF_STATE_REGION" -backend-config="encrypt=true" -input=false -no-color"
-  echo "$ $INIT_COMMAND"
-  (cd "$LAYERS_DIR/$LAYER" && $INIT_COMMAND)
+  set -x
+  (cd "$LAYERS_DIR/$LAYER" && terraform init -backend=true -backend-config="bucket=$TF_STATE_BUCKET" -backend-config="region=$TF_STATE_REGION" -backend-config="encrypt=true" -input=false -no-color)
+  set +x
 
   # cache .terraform during the plan
   (cd "$LAYERS_DIR/$LAYER" && tar -czf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz" .terraform)
 
-  PLAN_COMMAND="terraform plan -no-color -input=false -out="$WORKSPACE_DIR/terraform.$LAYER.plan""
-  echo "$ $PLAN_COMMAND"
-  (cd "$LAYERS_DIR/$LAYER" && $PLAN_COMMAND | tee -a "$WORKSPACE_DIR/full_plan_output.log" | grep -v "Refreshing state")
+  set -x
+  (cd "$LAYERS_DIR/$LAYER" && terraform plan -no-color -input=false -out="$WORKSPACE_DIR/terraform.$LAYER.plan" | tee -a "$WORKSPACE_DIR/full_plan_output.log" | grep -v "Refreshing state")
+  set +x
 
   # for debugging, show these files exist
   ls -la "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz"
