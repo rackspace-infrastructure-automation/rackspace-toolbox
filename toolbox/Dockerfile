@@ -2,7 +2,7 @@ FROM python:3-alpine
 
 # versions to install
 ARG JSON2HCL_VERSION=0.0.6
-ARG TUVOK_VERSION=v0.0.3
+ARG TUVOK_VERSION=v0.0.4
 
 # pre-reqs for toolbox & tuvok
 RUN apk --update add bash git openssh openssl curl wget py-pip jq
