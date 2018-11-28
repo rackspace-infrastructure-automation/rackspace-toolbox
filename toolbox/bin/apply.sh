@@ -24,8 +24,9 @@ for LAYER in $CHANGED_LAYERS; do
   # uncache .terraform for the apply
   (cd "$LAYERS_DIR/$LAYER" && tar xzf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz")
 
-  echo "$ terraform apply"
+  set -x
   (cd "$LAYERS_DIR/$LAYER" && terraform apply -input=false -no-color "$WORKSPACE_DIR/terraform.$LAYER.plan")
+  set +x
 done
 
 # escrows applied revision
