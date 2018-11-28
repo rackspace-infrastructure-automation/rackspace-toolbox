@@ -62,6 +62,8 @@ if [ -d "$LAYERS_DIR" ]; then
   [ -z "$TF_STATE_BUCKET" ] && echo "Missing \$TF_STATE_BUCKET" && exit 1
   [ -z "$TF_STATE_REGION" ] && echo "Missing \$TF_STATE_REGION" && exit 1
 
+  echo "Using bucket for state backend: $TF_STATE_BUCKET"
+
   LAYERS=$(find "$LAYERS_DIR"/* -maxdepth 0 -type d -exec basename '{}' \; | sort -n)
 
   echo "Layers found: "
