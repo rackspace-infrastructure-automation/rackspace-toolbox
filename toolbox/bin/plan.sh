@@ -17,6 +17,14 @@ fi
 
 for LAYER in $CHANGED_LAYERS; do
   echo "> Planning layer: $LAYER"
+
+  # ensure even deleted layers are plannable
+  if [ ! -d "$LAYERS_DIR/$LAYER" ]; then
+    echo "> Layer directory $LAYERS_DIR/$LAYER was not found, creating an empty version." | tee -a "$WORKSPACE_DIR/full_plan_output.log"
+    mkdir -p "$LAYERS_DIR/$LAYER/.terraform"
+    touch "$LAYERS_DIR/$LAYER/deleted.tf"
+  fi
+
   set -x
   (cd "$LAYERS_DIR/$LAYER" && terraform init -backend=true -backend-config="bucket=$TF_STATE_BUCKET" -backend-config="region=$TF_STATE_REGION" -backend-config="encrypt=true" -input=false -no-color)
   set +x
