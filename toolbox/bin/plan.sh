@@ -22,7 +22,7 @@ for LAYER in $CHANGED_LAYERS; do
   if [ ! -d "$LAYERS_DIR/$LAYER" ]; then
     echo "> Layer directory $LAYERS_DIR/$LAYER was not found, creating an empty version." | tee -a "$WORKSPACE_DIR/full_plan_output.log"
     mkdir -p "$LAYERS_DIR/$LAYER/.terraform"
-    touch "$LAYERS_DIR/$LAYER/main.tf"
+    touch "$LAYERS_DIR/$LAYER/deleted.tf"
   fi
 
   set -x
