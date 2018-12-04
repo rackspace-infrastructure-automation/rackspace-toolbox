@@ -59,3 +59,32 @@ function teardown() {
   # ensure the existing layer didn't have special deleted.tf created
   [ ! -f "layers/base_network/deleted.tf" ]
 }
+
+@test "apply makes empty layer if layer does not exist" {
+  mkdir -p ./workspace
+  printf 'deleted_layer\n' > ./workspace/changed_layers
+  TEST_LOCAL_REPO=$(pwd)
+
+  # ensure deleted_layer looks like it was planned and tarred up
+  mkdir -p layers/deleted_layer/.terraform
+  touch layers/deleted_layer/deleted.tf layers/deleted_layer/.terraform/init
+  ( cd layers/deleted_layer && tar czvf $TEST_LOCAL_REPO/workspace/.terraform.deleted_layer.tar.gz . )
+  touch $TEST_LOCAL_REPO/workspace/terraform.deleted_layer.plan
+  rm -rf layers/deleted_layer
+
+  echo '
+  echo "$@"
+  ' > $bin_terraform
+
+  TF_STATE_BUCKET='le-bucket'
+  TF_STATE_REGION='le-region'
+  apply.sh
+
+  # ensure the deleted layer was created
+  [ -d "layers/deleted_layer" ]
+  [ -d "layers/deleted_layer/.terraform" ]
+  [ -f "layers/deleted_layer/deleted.tf" ]
+
+  # ensure the existing layer didn't have special empty.tf created
+  [ ! -f "layers/base_network/deleted.tf" ]
+}
