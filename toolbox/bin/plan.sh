@@ -16,29 +16,25 @@ if [ -z "$CHANGED_LAYERS" ]; then
 fi
 
 for LAYER in $CHANGED_LAYERS; do
-  PLAN_LOG="$WORKSPACE_DIR/plan.$LAYER.log"
   echo "> Planning layer: $LAYER"
 
   # ensure even deleted layers are plannable
   if [ ! -d "$LAYERS_DIR/$LAYER" ]; then
-    echo "> Layer directory $LAYERS_DIR/$LAYER was not found, creating an empty version." | tee -a "$PLAN_LOG"
+    echo "> Layer directory $LAYERS_DIR/$LAYER was not found, creating an empty version."
     mkdir -p "$LAYERS_DIR/$LAYER/.terraform"
     touch "$LAYERS_DIR/$LAYER/deleted.tf"
   fi
 
-  cd "$LAYERS_DIR/$LAYER"
+  pushd "$LAYERS_DIR/$LAYER"
   set -x
-  terraform init -no-color -input=false -backend=true -backend-config="bucket=$TF_STATE_BUCKET" -backend-config="region=$TF_STATE_REGION" -backend-config="encrypt=true" | tee -a "$PLAN_LOG"
-  set +x
+  terraform init -no-color -input=false -backend=true -backend-config="bucket=$TF_STATE_BUCKET" -backend-config="region=$TF_STATE_REGION" -backend-config="encrypt=true"
 
   # cache .terraform during the plan
   tar -czf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz" .terraform
 
-  set -x
-  terraform plan -no-color -input=false -out="$WORKSPACE_DIR/terraform.$LAYER.plan" | tee -a "$PLAN_LOG" | grep -v "Refreshing state"
+  terraform plan -no-color -input=false -out="$WORKSPACE_DIR/terraform.$LAYER.plan" | tee /dev/stdout | sed -n '/---/,/---/p' > "$WORKSPACE_DIR/$LAYER.plan.txt"
   set +x
-
-  terraform show -no-color "$WORKSPACE_DIR/terraform.$LAYER.plan" | tee -a "$PLAN_LOG" "$WORKSPACE_DIR/terraform.$LAYER.plan.txt"
+  popd
 
   # for debugging, show these files exist
   ls -la "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz"
