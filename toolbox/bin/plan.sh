@@ -36,5 +36,3 @@ for LAYER in $CHANGED_LAYERS; do
   (set -x && terraform plan -no-color -input=false -out="$WORKSPACE_DIR/terraform.$LAYER.plan") | tee "$FULL_LOG"
   cat "$FULL_LOG" | sed -n '/---/,/---/p' >> "$PLANS_LOG"
 done
-
-ls -lh "$WORKSPACE_DIR/"
