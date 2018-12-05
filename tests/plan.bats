@@ -50,10 +50,10 @@ function teardown() {
 
   diff ./workspace/terraform.base_network.plan <(echo \
 "${TEST_LOCAL_REPO}/layers/base_network
-init -backend=true -backend-config=bucket=le-bucket -backend-config=region=le-region -backend-config=encrypt=true -input=false -no-color
+init -no-color -input=false -backend=true -backend-config=bucket=le-bucket -backend-config=region=le-region -backend-config=encrypt=true
 plan -no-color -input=false -out=${TEST_LOCAL_REPO}/workspace/terraform.base_network.plan")
   diff ./workspace/terraform.route53_internal_zone.plan <(echo \
 "${TEST_LOCAL_REPO}/layers/route53_internal_zone
-init -backend=true -backend-config=bucket=le-bucket -backend-config=region=le-region -backend-config=encrypt=true -input=false -no-color
+init -no-color -input=false -backend=true -backend-config=bucket=le-bucket -backend-config=region=le-region -backend-config=encrypt=true
 plan -no-color -input=false -out=${TEST_LOCAL_REPO}/workspace/terraform.route53_internal_zone.plan")
 }
