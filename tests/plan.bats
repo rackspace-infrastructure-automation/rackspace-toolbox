@@ -39,6 +39,11 @@ function teardown() {
         pwd > "$output"
         cat ./.terraform/init >> "$output"
         echo $@ >> "$output"
+        echo "plan yada yada"
+        echo "-----------"
+        echo " + new_resource (at $(pwd))"
+        echo "-----------"
+        echo "more yada yada"
       fi
     done
   fi
@@ -56,4 +61,13 @@ plan -no-color -input=false -out=${TEST_LOCAL_REPO}/workspace/terraform.base_net
 "${TEST_LOCAL_REPO}/layers/route53_internal_zone
 init -no-color -input=false -backend=true -backend-config=bucket=le-bucket -backend-config=region=le-region -backend-config=encrypt=true
 plan -no-color -input=false -out=${TEST_LOCAL_REPO}/workspace/terraform.route53_internal_zone.plan")
+  diff ./workspace/artifacts/terraform_plans.log <(echo \
+"> Planning layer: base_network
+-----------
+ + new_resource (at ${TEST_LOCAL_REPO}/layers/base_network)
+-----------
+> Planning layer: route53_internal_zone
+-----------
+ + new_resource (at ${TEST_LOCAL_REPO}/layers/route53_internal_zone)
+-----------")
 }
