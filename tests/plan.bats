@@ -81,3 +81,47 @@ plan -no-color -input=false -out=${TEST_LOCAL_REPO}/workspace/terraform.route53_
  + new_resource (at ${TEST_LOCAL_REPO}/layers/route53_internal_zone)
 -----------")
 }
+
+@test "plans includes 'no changes'" {
+  mkdir -p ./workspace
+  printf 'base_network\n' > ./workspace/changed_layers
+  TEST_LOCAL_REPO=$(pwd)
+
+  echo '
+  echo "$@"
+  if [ "$1" = "init" ]; then
+    mkdir -p ./.terraform
+    echo "$@" > ./.terraform/init
+  elif [ "$1" = "plan" ]; then
+    for arg in $@; do
+      if (echo $arg | grep -q "^-out="); then
+        output=$(echo $arg | sed "s/^-out=//")
+        pwd > "$output"
+        cat ./.terraform/init >> "$output"
+        echo $@ >> "$output"
+        echo "Refreshing Terraform state in-memory prior to plan..."
+        echo "--------------------"
+        echo ""
+        echo "No changes. Infrastructure is up-to-date."
+        echo ""
+        echo "This means that Terraform yada yada yada..."
+      fi
+    done
+  fi
+  ' > $bin_terraform
+
+  TF_STATE_BUCKET='le-bucket'
+  TF_STATE_REGION='le-region'
+  plan.sh
+
+  diff /tmp/artifacts/terraform_all_plans.log <(echo \
+"> Planning layer: base_network
+--------------------
+
+No changes. Infrastructure is up-to-date.")
+  diff /tmp/artifacts/terraform_plan.base_network.log <(echo \
+"> Planning layer: base_network
+--------------------
+
+No changes. Infrastructure is up-to-date.")
+}

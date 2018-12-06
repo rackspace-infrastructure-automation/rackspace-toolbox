@@ -39,5 +39,5 @@ for LAYER in $CHANGED_LAYERS; do
 
   TEMP_PLAN_LOG=$(mktemp)
   (set -x && terraform plan -no-color -input=false -out="$WORKSPACE_DIR/terraform.$LAYER.plan") | tee -a "$TEMP_PLAN_LOG"
-  cat "$TEMP_PLAN_LOG" | tee -a "$ALL_OUTPUT" "$LAYER_OUTPUT" | sed -n '/---/,/---/p' | tee -a "$ALL_PLANS" "$LAYER_PLAN" > /dev/null
+  cat "$TEMP_PLAN_LOG" | tee -a "$ALL_OUTPUT" "$LAYER_OUTPUT" | sed -n '/-----/,/-----/p'  | sed -n '/-----/,/No changes. Infrastructure is up-to-date/p' | tee -a "$ALL_PLANS" "$LAYER_PLAN" > /dev/null
 done
