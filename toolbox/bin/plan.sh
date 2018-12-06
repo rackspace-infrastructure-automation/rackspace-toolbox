@@ -16,7 +16,8 @@ if [ -z "$CHANGED_LAYERS" ]; then
 fi
 
 for LAYER in $CHANGED_LAYERS; do
-  PLANS_LOG="$ARTIFACTS_DIR/terraform_plans.log"
+  mkdir -p /tmp/artifacts/
+  PLANS_LOG="/tmp/artifacts/terraform_plans.log"
   echo "> Planning layer: $LAYER" | tee -a "$PLANS_LOG"
 
   # ensure even deleted layers are plannable

@@ -31,9 +31,6 @@ WORKING_DIR=$(pwd)
 WORKSPACE_DIR="$WORKING_DIR/workspace"
 mkdir -p "$WORKSPACE_DIR"
 
-ARTIFACTS_DIR="$WORKSPACE_DIR/artifacts"
-mkdir -p "$ARTIFACTS_DIR"
-
 # populate current module info
 MODULES_DIR="$WORKING_DIR/modules"
 MODULES=''
