@@ -70,14 +70,14 @@ plan -no-color -input=false -out=${TEST_LOCAL_REPO}/workspace/terraform.route53_
 -----------
  + new_resource (at ${TEST_LOCAL_REPO}/layers/route53_internal_zone)
 -----------")
-#   diff /tmp/artifacts/terraform_plan.base_network.log <(echo \
-# "> Planning layer: base_network
-# -----------
-#  + new_resource (at ${TEST_LOCAL_REPO}/layers/base_network)
-# -----------")
-#   diff /tmp/artifacts/terraform_plan.route53_internal_zone.log <(echo \
-# "> Planning layer: route53_internal_zone
-# -----------
-#  + new_resource (at ${TEST_LOCAL_REPO}/layers/route53_internal_zone)
-# -----------")
+  diff /tmp/artifacts/terraform_plan.base_network.log <(echo \
+"> Planning layer: base_network
+-----------
+ + new_resource (at ${TEST_LOCAL_REPO}/layers/base_network)
+-----------")
+  diff /tmp/artifacts/terraform_plan.route53_internal_zone.log <(echo \
+"> Planning layer: route53_internal_zone
+-----------
+ + new_resource (at ${TEST_LOCAL_REPO}/layers/route53_internal_zone)
+-----------")
 }
