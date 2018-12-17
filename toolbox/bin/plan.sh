@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -eu
+set -eu -o pipefail
 
 source $(dirname $(realpath $0))/variables.sh
 
