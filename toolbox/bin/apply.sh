@@ -28,12 +28,12 @@ for LAYER in $CHANGED_LAYERS; do
   fi
 
   # uncache .terraform for the apply
-  (cd "$LAYERS_DIR/$LAYER" && tar xzf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz")
+  cd "$LAYERS_DIR/$LAYER"
+  tar xzf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz"
 
-  set -x
-  (cd "$LAYERS_DIR/$LAYER" && terraform apply -input=false -no-color "$WORKSPACE_DIR/terraform.$LAYER.plan")
-  set +x
+  (set -x && terraform apply -input=false -no-color "$WORKSPACE_DIR/terraform.$LAYER.plan")
 done
+cd "$WORKING_DIR"
 
 # escrows applied revision
 REVISION="${CIRCLE_SHA1:-$(git rev-parse HEAD)}"
