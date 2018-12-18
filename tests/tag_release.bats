@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-set -eu
+set -eu -o pipefail
 
 bin_path='/fake-bin'
 bin_docker="$bin_path/docker"

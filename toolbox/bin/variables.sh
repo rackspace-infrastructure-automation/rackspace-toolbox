@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -eu
+set -eu -o pipefail
 
 check_old() {
   local fake_hostname='github.com.original.invalid'
@@ -13,7 +13,8 @@ check_old() {
   git fetch --quiet --depth 100 $(git config --get remote.origin.url | sed "s/git@github.com:/git@${fake_hostname}:/")
 
   # in the last hundred commits, is one of the parents in the current master?
-  if ! (git log --pretty=format:'%H' -n 100 | grep -q "$(git rev-parse remotes/origin/master)"); then
+  local origin_master_ref="$(git rev-parse remotes/origin/master)"
+  if ! (git log --pretty=format:'%H' -n 100 | grep "$origin_master_ref" > /dev/null); then
     echo >&2 'Your branch is not up to date with remotes/origin/master. Exiting...'
     exit 1
   else
