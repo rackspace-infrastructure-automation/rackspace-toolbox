@@ -11,10 +11,13 @@ check_old() {
 
   # be sure branch is up to date
   git fetch --quiet --depth 100 $(git config --get remote.origin.url | sed "s/git@github.com:/git@${fake_hostname}:/")
+  local master_ref=$(git rev-parse remotes/origin/master)
 
   # in the last hundred commits, is one of the parents in the current master?
-  if ! (git log --pretty=format:'%H' -n 100 | grep -q "$(git rev-parse remotes/origin/master)"); then
+  if ! (git log --pretty=format:'%H' -n 100 | grep -q "${master_ref}"); then
     echo >&2 'Your branch is not up to date with remotes/origin/master. Exiting...'
+    echo >&2 "Head of your master: $master_ref"
+    echo >&2 "Head of your branch: $(git log --pretty=format:'%H' -n 1)"
     exit 1
   else
     echo 'Your branch is up to date. Proceeding...'
