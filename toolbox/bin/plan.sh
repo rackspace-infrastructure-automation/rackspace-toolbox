@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -eu -o pipefail
+set -eu
 
 source $(dirname $(realpath $0))/variables.sh
 
@@ -38,6 +38,6 @@ for LAYER in $CHANGED_LAYERS; do
   tar -czf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz" .terraform | tee -a "$ALL_OUTPUT" "$LAYER_OUTPUT"
 
   TEMP_PLAN_LOG=$(mktemp)
-  (set -x && terraform plan -no-color -input=false -out="$WORKSPACE_DIR/terraform.$LAYER.plan") | tee -a "$TEMP_PLAN_LOG" | grep -v "Refreshing state"
+  (set -x && terraform plan -no-color -input=false -out="$WORKSPACE_DIR/terraform.$LAYER.plan") | tee -a "$TEMP_PLAN_LOG"
   cat "$TEMP_PLAN_LOG" | tee -a "$ALL_OUTPUT" "$LAYER_OUTPUT" | sed -n '/-----/,/-----/p'  | sed -n '/-----/,/No changes. Infrastructure is up-to-date/p' | tee -a "$ALL_PLANS" "$LAYER_PLAN" > /dev/null
 done
