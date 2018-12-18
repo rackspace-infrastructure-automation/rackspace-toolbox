@@ -21,19 +21,13 @@ for LAYER in $CHANGED_LAYERS; do
   ls -la "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz"
   ls -la "$WORKSPACE_DIR/terraform.$LAYER.plan"
 
-  # ensure even deleted layer can be applied (no-op)
-  if [ ! -d "$LAYERS_DIR/$LAYER" ]; then
-    echo "> Layer directory $LAYERS_DIR/$LAYER was not found, creating an empty version."
-    mkdir -p "$LAYERS_DIR/$LAYER"
-  fi
-
   # uncache .terraform for the apply
-  cd "$LAYERS_DIR/$LAYER"
-  tar xzf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz"
+  (cd "$LAYERS_DIR/$LAYER" && tar xzf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz")
 
-  (set -x && terraform apply -input=false -no-color "$WORKSPACE_DIR/terraform.$LAYER.plan")
+  set -x
+  (cd "$LAYERS_DIR/$LAYER" && terraform apply -input=false -no-color "$WORKSPACE_DIR/terraform.$LAYER.plan")
+  set +x
 done
-cd "$WORKING_DIR"
 
 # escrows applied revision
 REVISION="${CIRCLE_SHA1:-$(git rev-parse HEAD)}"
