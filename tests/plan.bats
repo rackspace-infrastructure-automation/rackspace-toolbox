@@ -125,27 +125,3 @@ No changes. Infrastructure is up-to-date.")
 
 No changes. Infrastructure is up-to-date.")
 }
-
-@test "fails if plan fails" {
-  mkdir -p ./workspace
-  printf 'base_network\n' > ./workspace/changed_layers
-  TEST_LOCAL_REPO=$(pwd)
-
-  echo '
-  echo "$@"
-  if [ "$1" = "init" ]; then
-    mkdir -p ./.terraform
-    echo "$@" > ./.terraform/init
-  elif [ "$1" = "plan" ]; then
-    exit 1
-  fi
-  ' > $bin_terraform
-
-  TF_STATE_BUCKET='le-bucket'
-  TF_STATE_REGION='le-region'
-  run plan.sh
-
-  echo ">> output:"
-  echo "$output"
-  [ "$status" != 0 ]
-}
