@@ -26,8 +26,8 @@ function teardown() {
 
   # `git log | grep -q` might exit with 141 in some cases (see https://stackoverflow.com/questions/19120263/why-exit-code-141-with-grep-q)
   seq 90 | xargs -n1 -I% git commit -q --allow-empty -m "empty %"
-  git push origin
-  git checkout -b new-branch
+  git push -q origin
+  git checkout -qb new-branch
 
   source variables.sh
 }
@@ -39,10 +39,12 @@ function teardown() {
   git checkout -qb new-branch
   git checkout -q master
   seq 90 | xargs -n1 -I% git commit -q --allow-empty -m "empty %"
-  git push origin
-  git checkout new-branch
+  git push -q origin
+  git checkout -q new-branch
 
   run source variables.sh
+  echo ">> output:"
+  echo "$output"
   [ "$status" = 1 ]
 }
 
@@ -153,6 +155,8 @@ function teardown() {
 @test "exits with 1 if TF_STATE_BUCKET and TF_STATE_REGION and V2 are not set but there are layers" {
   unset TF_STATE_BUCKET TF_STATE_BUCKET_V2 TF_STATE_REGION TF_STATE_REGION_V2
   run source variables.sh
+  echo ">> output:"
+  echo "$output"
   [ "$status" = 1 ]
 }
 

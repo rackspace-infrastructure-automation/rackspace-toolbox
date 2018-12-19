@@ -15,10 +15,10 @@ check_old() {
   # in the last hundred commits, is one of the parents in the current master?
   local origin_master_ref="$(git rev-parse remotes/origin/master)"
   if ! (git log --pretty=format:'%H' -n 100 | grep "$origin_master_ref" > /dev/null); then
-    echo >&2 'Your branch is not up to date with remotes/origin/master. Exiting...'
+    echo >&2 "Your branch is not up to date with remotes/origin/master($origin_master_ref). Exiting..."
     exit 1
   else
-    echo 'Your branch is up to date. Proceeding...'
+    echo "Your branch is up to date with remotes/origin/master($origin_master_ref). Proceeding..."
   fi
 }
 
