@@ -1,5 +1,9 @@
 # rackspace-toolbox Changelog
 
+## [1.6.2](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.6.2) ( Dec 21, 2018)
+
+Adds this CHANGELOG.
+
 ## [1.6.1](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.6.1) ( Dec 18, 2018)
 
 Fully rolls back code to match version 1.4.4. There was an issue detecting whether the current branch was in sync with master.
