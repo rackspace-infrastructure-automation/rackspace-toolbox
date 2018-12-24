@@ -1,11 +1,10 @@
 # rackspace-toolbox
 
-Terraform scripts and docker images.
+This is a docker image published at [Docker Hub](https://hub.docker.com/r/rackautomation/rackspace-toolbox/). It's part of Rackspace's [Managed Infrastructure as Code](https://manage.rackspace.com/aws/docs/product-guide/miac.html) offering.
 
-https://hub.docker.com/r/rackautomation/rackspace-toolbox/
-https://circleci.com/gh/rackspace-infrastructure-automation/rackspace-toolbox
+[![CircleCI](https://circleci.com/gh/rackspace-infrastructure-automation/rackspace-toolbox.svg?style=svg&circle-token=f589f8bc84999fb48fe819fa553e50e7594654d0)](https://circleci.com/gh/rackspace-infrastructure-automation/rackspace-toolbox)
 
-rackautomation/rackspace-toolbox image tags:
+Image tags:
 - GitHub [releases](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases)
 - `master` has the latest stable version
 - `branch_{branch_name}` and git sha for newly created branches (useful for trying out code from toolbox changes in development)
