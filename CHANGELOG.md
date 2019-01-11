@@ -1,5 +1,9 @@
 # rackspace-toolbox Changelog
 
+## [1.6.3](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.6.3) (Jan 11, 2019)
+
+Uses bash `pipefail` option in all scripts.
+
 ## [1.6.2](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.6.2) ( Dec 21, 2018)
 
 Adds this CHANGELOG.
