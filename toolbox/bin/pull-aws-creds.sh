@@ -32,10 +32,12 @@ echo >&2 "> Requesting credentials for $TF_VAR_aws_account_id. Signing request w
 SIGNATURE=$(printf $MESSAGE | openssl dgst -sha256 -sign $KEY_FILE | base64 | tr -d '\n')
 
 TEMP_OUTPUT=$(mktemp)
-RESP_CODE=$(curl -sS -XPOST -d "$MESSAGE" \
-  -H 'Accept: text/x-shellscript' -H 'Content-Type: application/json' \
-  -H 'Authorization: Signature keyId="'"$FINGERPRINT"'",algorithm="rsa-sha256",signature="'"$SIGNATURE"'"' \
-  -w '%{http_code}' -o "$TEMP_OUTPUT" \
+RESP_CODE=$(curl --silent --show-error --request POST --data "$MESSAGE" \
+  --header 'Accept: text/x-shellscript' \
+  --header 'Content-Type: application/json' \
+  --header 'Authorization: Signature keyId="'"$FINGERPRINT"'",algorithm="rsa-sha256",signature="'"$SIGNATURE"'"' \
+  --write-out '%{http_code}' --output "$TEMP_OUTPUT" \
+  --retry 2 --retry-connrefused \
   "${API_BASE}/v0/aws/credentials")
 
 if [ "$RESP_CODE" != '200' ]; then
