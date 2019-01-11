@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-set -eu
+set -eu -o pipefail
 
 bin_path='/fake-bin'
 bin_docker="$bin_path/docker"
@@ -18,6 +18,34 @@ function setup() {
 function teardown() {
   cd "$SOURCE_REPO"
   rm "$bin_docker" "$bin_aws"
+}
+
+@test "accepts branch up to date with master" {
+  mkdir -p ./workspace
+  echo layer_one > ./workspace/changed_layers
+
+  # `git log | grep -q` might exit with 141 in some cases (see https://stackoverflow.com/questions/19120263/why-exit-code-141-with-grep-q)
+  seq 90 | xargs -n1 -I% git commit -q --allow-empty -m "empty %"
+  git push -q origin
+  git checkout -qb new-branch
+
+  source variables.sh
+}
+
+@test "rejects branch out of sync with master" {
+  mkdir -p ./workspace
+  echo layer_one > ./workspace/changed_layers
+
+  git checkout -qb new-branch
+  git checkout -q master
+  seq 90 | xargs -n1 -I% git commit -q --allow-empty -m "empty %"
+  git push -q origin
+  git checkout -q new-branch
+
+  run source variables.sh
+  echo ">> output:"
+  echo "$output"
+  [ "$status" = 1 ]
 }
 
 @test "uses cached workspace/changed_layers file" {
@@ -127,6 +155,8 @@ function teardown() {
 @test "exits with 1 if TF_STATE_BUCKET and TF_STATE_REGION and V2 are not set but there are layers" {
   unset TF_STATE_BUCKET TF_STATE_BUCKET_V2 TF_STATE_REGION TF_STATE_REGION_V2
   run source variables.sh
+  echo ">> output:"
+  echo "$output"
   [ "$status" = 1 ]
 }
 
@@ -143,5 +173,5 @@ function teardown() {
   tfenv uninstall $TFENV_TEST_VERSION || echo "v$TFENV_TEST_VERSION was not installed, didn't remove it"
 
   source variables.sh
-  terraform -version | grep -q "v$TFENV_TEST_VERSION"
+  terraform -version | grep '^Terraform v0.11.1$'
 }

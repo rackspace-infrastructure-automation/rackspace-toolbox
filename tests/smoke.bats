@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-set -eu
+set -eu -o pipefail
 
 SOURCE_REPO=$(git rev-parse --show-toplevel)
 source "$SOURCE_REPO/tests/bats-utils"

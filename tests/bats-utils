@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -eu
+set -eu -o pipefail
 
 function fake_command() {
   for var in "$@"; do
