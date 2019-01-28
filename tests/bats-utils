@@ -22,6 +22,7 @@ function setup_gitrepo() {
   cd ../cloned_infra
   git config --local user.email "test@example.com"
   git config --local user.name "test"
+  rm -rf /tmp/artifacts
 }
 
 function unset_vars() {

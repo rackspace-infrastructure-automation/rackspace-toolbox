@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -eu
+set -eu -o pipefail
 
 source $(dirname $(realpath $0))/variables.sh
 
@@ -22,14 +22,14 @@ for LAYER in $CHANGED_LAYERS; do
   ls -la "$WORKSPACE_DIR/terraform.$LAYER.plan"
 
   # uncache .terraform for the apply
-  (cd "$LAYERS_DIR/$LAYER" && tar xzf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz")
+  cd "$LAYERS_DIR/$LAYER"
+  tar xzf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz"
 
-  set -x
-  (cd "$LAYERS_DIR/$LAYER" && terraform apply -input=false -no-color "$WORKSPACE_DIR/terraform.$LAYER.plan")
-  set +x
+  (set -x && terraform apply -input=false -no-color "$WORKSPACE_DIR/terraform.$LAYER.plan")
 done
 
 # escrows applied revision
+cd "$WORKING_DIR"
 REVISION="${CIRCLE_SHA1:-$(git rev-parse HEAD)}"
 echo "$REVISION" > tf-applied-revision.sha
 aws s3 cp ./tf-applied-revision.sha "s3://${TF_STATE_BUCKET}/"
