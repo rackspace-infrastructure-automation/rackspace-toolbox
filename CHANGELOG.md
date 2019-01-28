@@ -1,5 +1,9 @@
 # rackspace-toolbox Changelog
 
+## [1.7.0](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.0) (Jan 28, 2019)
+
+Writes both verbose logs file and succinct plan files to `/tmp/artifacts/`.
+
 ## [1.6.4](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.6.4) (Jan 11, 2019)
 
 Make up to 3 attempts to request credentials.
