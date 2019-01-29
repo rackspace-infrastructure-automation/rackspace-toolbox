@@ -1,5 +1,9 @@
 # rackspace-toolbox Changelog
 
+## [1.7.2](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.2) (Jan 29, 2019)
+
+Touches full_plan_output.log to avoid breaking builds that include it in persist_to_workspace.
+
 ## [1.7.1](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.1) (Jan 29, 2019)
 
 Writes some artifacts even if there is nothing to plan. Also, prints toolbox version at beginning of scripts.

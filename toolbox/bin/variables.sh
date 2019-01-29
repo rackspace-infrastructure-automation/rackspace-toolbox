@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -eu -o pipefail
 
-echo "Rackspace Toolbox - 1.7.1"
+echo "Rackspace Toolbox - 1.7.2"
 
 check_old() {
   local fake_hostname='github.com.original.invalid'
