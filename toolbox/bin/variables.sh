@@ -59,7 +59,7 @@ fi
 LAYERS_DIR="$WORKING_DIR/layers"
 LAYERS=''
 if [ ! -d "$LAYERS_DIR" ]; then
-  # CircleCI fails the build is none of the files mentioned in persist_to_workspace exist.
+  # CircleCI fails the build if none of the files mentioned in persist_to_workspace exist.
   # changed_layers is the only one that makes to create in this situation
   echo > "$WORKSPACE_DIR/changed_layers"
 else
