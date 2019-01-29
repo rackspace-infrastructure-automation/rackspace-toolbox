@@ -58,7 +58,9 @@ fi
 # populate current layer info
 LAYERS_DIR="$WORKING_DIR/layers"
 LAYERS=''
-if [ -d "$LAYERS_DIR" ]; then
+if [ ! -d "$LAYERS_DIR" ]; then
+  echo > "$WORKSPACE_DIR/changed_layers"
+else
   TF_STATE_BUCKET="${TF_STATE_BUCKET:-$TF_STATE_BUCKET_V2}"
   TF_STATE_REGION="${TF_STATE_REGION:-$TF_STATE_REGION_V2}"
 
