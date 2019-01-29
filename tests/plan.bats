@@ -149,3 +149,14 @@ No changes. Infrastructure is up-to-date.")
   echo "$output"
   [ "$status" != 0 ]
 }
+
+@test "plans when no layers were changed" {
+  mkdir -p ./workspace
+  echo > ./workspace/changed_layers
+
+  TF_STATE_BUCKET='le-bucket'
+  TF_STATE_REGION='le-region'
+  plan.sh
+
+  diff /tmp/artifacts/terraform_all_outputs.log <(echo "> No changed layers to plan.")
+}
