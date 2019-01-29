@@ -1,5 +1,9 @@
 # rackspace-toolbox Changelog
 
+## [1.7.1](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.1) (Jan 29, 2019)
+
+Writes some artifacts even if there is nothing to plan. Also, prints toolbox version at beginning of scripts.
+
 ## [1.7.0](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.0) (Jan 28, 2019)
 
 Writes both verbose logs file and succinct plan files to `/tmp/artifacts/`.
