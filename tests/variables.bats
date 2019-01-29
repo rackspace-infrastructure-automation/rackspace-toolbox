@@ -20,6 +20,19 @@ function teardown() {
   rm "$bin_docker" "$bin_aws"
 }
 
+@test "version is in sync with changelog" {
+  mkdir -p ./workspace
+  echo layer_one > ./workspace/changed_layers
+
+  CHANGELOG_VERSION=$(grep -m1 'releases/tag/' -- "$SOURCE_REPO/CHANGELOG.md" | sed -n 's/.*tag\/\([^)]*\).*/\1/p')
+
+  run source variables.sh
+  echo "Expected to print version: $CHANGELOG_VERSION"
+  echo ">> output:"
+  echo "$output"
+  echo "$output" | grep -q "$CHANGELOG_VERSION"
+}
+
 @test "accepts branch up to date with master" {
   mkdir -p ./workspace
   echo layer_one > ./workspace/changed_layers

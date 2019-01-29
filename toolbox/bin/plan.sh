@@ -3,21 +3,21 @@ set -eu -o pipefail
 
 source $(dirname $(realpath $0))/variables.sh
 
+mkdir -p /tmp/artifacts/
+ALL_OUTPUT="/tmp/artifacts/terraform_all_outputs.log"
+
 if [ ! -d "$LAYERS_DIR" ]; then
   # don't apply anything if there's no layers directory, we're likely in the
   # common repo here, and shouldn't be running Terraform at all.
-  echo "> Not planning, no layers directory were found." | tee -a "$WORKSPACE_DIR/full_plan_output.log"
+  echo "> Not planning, no layers directory were found." | tee -a "$ALL_OUTPUT"
   exit
 fi
-
 if [ -z "$CHANGED_LAYERS" ]; then
-  echo "> No changed layers to plan." | tee -a "$WORKSPACE_DIR/full_plan_output.log"
+  echo "> No changed layers to plan." | tee -a "$ALL_OUTPUT"
   exit
 fi
 
 for LAYER in $CHANGED_LAYERS; do
-  mkdir -p /tmp/artifacts/
-  ALL_OUTPUT="/tmp/artifacts/terraform_all_outputs.log"
   ALL_PLANS="/tmp/artifacts/terraform_all_plans.log"
   LAYER_OUTPUT="/tmp/artifacts/terraform_output.${LAYER}.log"
   LAYER_PLAN="/tmp/artifacts/terraform_plan.${LAYER}.log"

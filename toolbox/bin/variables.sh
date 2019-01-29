@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 set -eu -o pipefail
 
+echo "Rackspace Toolbox - 1.7.1"
+
 check_old() {
   local fake_hostname='github.com.original.invalid'
   # avoid overridden ssh config for github.com
