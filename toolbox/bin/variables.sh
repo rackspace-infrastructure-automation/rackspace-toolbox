@@ -58,11 +58,8 @@ fi
 # populate current layer info
 LAYERS_DIR="$WORKING_DIR/layers"
 LAYERS=''
-if [ ! -d "$LAYERS_DIR" ]; then
-  # CircleCI fails the build if none of the files mentioned in persist_to_workspace exist.
-  # We chose changed_layers to be the file that is always created.
-  echo > "$WORKSPACE_DIR/changed_layers"
-else
+CHANGED_LAYERS=''
+if [ -d "$LAYERS_DIR" ]; then
   TF_STATE_BUCKET="${TF_STATE_BUCKET:-$TF_STATE_BUCKET_V2}"
   TF_STATE_REGION="${TF_STATE_REGION:-$TF_STATE_REGION_V2}"
 
@@ -98,9 +95,12 @@ else
       aws s3 cp "s3://${TF_STATE_BUCKET}/tf-applied-revision.sha" ./last-tf-applied-revision.sha > /dev/null
       CHANGED_LAYERS=$(find_changed_layers "$(cat ./last-tf-applied-revision.sha)")
     fi
-    echo $CHANGED_LAYERS > "$WORKSPACE_DIR/changed_layers"
   fi
 
   echo "Changed layers: "
   echo $CHANGED_LAYERS
 fi
+
+# CircleCI fails the build if none of the files mentioned in persist_to_workspace exist.
+# We chose changed_layers to be the file that is always created.
+echo $CHANGED_LAYERS > "$WORKSPACE_DIR/changed_layers"
