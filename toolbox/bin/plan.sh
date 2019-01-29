@@ -3,6 +3,9 @@ set -eu -o pipefail
 
 source $(dirname $(realpath $0))/variables.sh
 
+# this is done for backward compatibility to builds that are specifically including full_plan_output.log in persist_to_workspace
+touch "$WORKSPACE_DIR/full_plan_output.log"
+
 mkdir -p /tmp/artifacts/
 ALL_OUTPUT="/tmp/artifacts/terraform_all_outputs.log"
 
