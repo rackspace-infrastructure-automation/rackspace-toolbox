@@ -1,6 +1,6 @@
 # rackspace-toolbox Changelog
 
-## [1.7.3](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.3) (Jan 29, 2019)
+## [1.7.3](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.3) (Jan 30, 2019)
 
 Ensures changed_layers is always created.
 
