@@ -22,7 +22,7 @@ function teardown() {
 
 @test "version is in sync with changelog" {
   mkdir -p ./workspace
-  echo layer_one > ./workspace/changed_layers
+  echo > ./workspace/changed_layers
 
   CHANGELOG_VERSION=$(grep -m1 'releases/tag/' -- "$SOURCE_REPO/CHANGELOG.md" | sed -n 's/.*tag\/\([^)]*\).*/\1/p')
 
@@ -78,6 +78,9 @@ function teardown() {
 
   source variables.sh
   diff <(echo "$CHANGED_LAYERS") <(echo '')
+
+  echo 'Expected ./workspace/changed_layers to exist'
+  [ -r ./workspace/changed_layers ]
 }
 
 @test "when no tf-applied-revision.sha, on master => all layers changed" {
@@ -86,6 +89,9 @@ function teardown() {
 
   source variables.sh
   diff <(echo "$CHANGED_LAYERS") <(printf 'applicable\nbase_network\nroute53_internal_zone\n')
+
+  echo 'Expected ./workspace/changed_layers to exist'
+  [ -r ./workspace/changed_layers ]
 }
 
 @test "when no tf-applied-revision.sha, on branch, with change => one changed layer" {
@@ -173,10 +179,13 @@ function teardown() {
   [ "$status" = 1 ]
 }
 
-@test "does not exit if TF_STATE_BUCKET and TF_STATE_REGION and V2 are not set if there are no layers" {
+@test "does not fail if TF_STATE_BUCKET and TF_STATE_REGION and V2 are not set if there are no layers" {
   unset TF_STATE_BUCKET TF_STATE_BUCKET_V2 TF_STATE_REGION TF_STATE_REGION_V2
   rm -r layers
   source variables.sh
+
+  echo 'Expected ./workspace/changed_layers to exist'
+  [ -r ./workspace/changed_layers ]
 }
 
 @test "installs specific terraform successfully if it isn't already, using tfenv" {
