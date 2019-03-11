@@ -21,6 +21,13 @@ for LAYER in $CHANGED_LAYERS; do
   ls -la "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz"
   ls -la "$WORKSPACE_DIR/terraform.$LAYER.plan"
 
+  # ensure even deleted layers are applyable
+  if [ ! -d "$LAYERS_DIR/$LAYER" ]; then
+    echo "> Layer directory $LAYERS_DIR/$LAYER was not found, creating an empty version."
+    mkdir -p "$LAYERS_DIR/$LAYER/.terraform"
+    touch "$LAYERS_DIR/$LAYER/deleted.tf"
+  fi
+
   # uncache .terraform for the apply
   cd "$LAYERS_DIR/$LAYER"
   tar xzf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz"
