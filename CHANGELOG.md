@@ -1,5 +1,9 @@
 # rackspace-toolbox Changelog
 
+## [1.7.4](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.4) (Mar 11, 2019)
+
+Ensures both plan and apply succeed when working with deleted layer directories.
+
 ## [1.7.3](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.3) (Jan 30, 2019)
 
 Ensures changed_layers is always created.
