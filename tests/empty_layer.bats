@@ -24,32 +24,30 @@ function teardown() {
 
 @test "plan makes empty layer if layer does not exist" {
   mkdir -p ./workspace
-  printf 'base_network\ndeleted_layer\n' > ./workspace/changed_layers
-  TEST_LOCAL_REPO=$(pwd)
+  printf 'deleted_layer\n' > ./workspace/changed_layers
 
-  # ensure base_network looks like a real layer already
-  mkdir -p layers/base_network
+  TF_STATE_BUCKET='le-bucket' TF_STATE_REGION='le-region' plan.sh
 
-  echo '
-  echo "$@"
-  if [ "$1" = "init" ]; then
-    mkdir -p ./.terraform
-    echo "$@" > ./.terraform/init
-  elif [ "$1" = "plan" ]; then
-    for arg in $@; do
-      if (echo $arg | grep -q "^-out="); then
-        output=$(echo $arg | sed "s/^-out=//")
-        pwd > "$output"
-        cat ./.terraform/init >> "$output"
-        echo $@ >> "$output"
-      fi
-    done
-  fi
-  ' > $bin_terraform
+  # ensure the deleted layer was created
+  [ -d "layers/deleted_layer" ]
+  [ -d "layers/deleted_layer/.terraform" ]
+  [ -f "layers/deleted_layer/deleted.tf" ]
 
-  TF_STATE_BUCKET='le-bucket'
-  TF_STATE_REGION='le-region'
-  plan.sh
+  # ensure the existing layer didn't have special deleted.tf created
+  [ ! -f "layers/base_network/deleted.tf" ]
+}
+
+@test "apply makes empty layer if layer does not exist" {
+  mkdir -p ./workspace
+  printf 'deleted_layer\n' > ./workspace/changed_layers
+
+  mkdir .terraform
+  echo 'init-data' > .terraform/init
+  tar -czf ./workspace/.terraform.deleted_layer.tar.gz .terraform
+  rm -r .terraform
+  echo 'fake-plan' > workspace/terraform.deleted_layer.plan
+
+  TF_STATE_BUCKET='le-bucket' TF_STATE_REGION='le-region' apply.sh
 
   # ensure the deleted layer was created
   [ -d "layers/deleted_layer" ]
