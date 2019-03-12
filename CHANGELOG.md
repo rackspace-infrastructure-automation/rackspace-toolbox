@@ -1,5 +1,9 @@
 # rackspace-toolbox Changelog
 
+## [1.7.5](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.5) (Mar 12, 2019)
+
+Updated to pre-install the most recent stable releases of terraform.
+
 ## [1.7.4](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.4) (Mar 11, 2019)
 
 Ensures both plan and apply succeed when working with deleted layer directories.
