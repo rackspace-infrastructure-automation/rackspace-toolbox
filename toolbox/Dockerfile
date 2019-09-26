@@ -34,7 +34,7 @@ ARG KUBECTL_VERSION="v1.16.0"
 
 ENV CLOUD_SDK_VERSION=$CLOUD_SDK_VERSION
 ENV PATH /google-cloud-sdk/bin:$PATH
-RUN apk --no-cache add \
+RUN apk --no-cache add musl-dev gcc \
         unzip \
         py3-crcmod \
         libc6-compat \
