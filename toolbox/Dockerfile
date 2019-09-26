@@ -29,3 +29,35 @@ RUN tfenv use 0.11.8
 COPY ./bin/* /var/opt/rackspace/bin/
 RUN ln -s /var/opt/rackspace/bin/* /usr/local/bin/
 WORKDIR /rackspace
+
+
+# Google SDK
+# https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/alpine/Dockerfile
+ARG CLOUD_SDK_VERSION="264.0.0"
+ARG PACKER_VERSION="1.4.3"
+ARG VAULT_VERSION="1.2.3"
+ARG KUBECTL_VERSION="v1.16.0"
+
+ENV CLOUD_SDK_VERSION=$CLOUD_SDK_VERSION
+ENV PATH /google-cloud-sdk/bin:$PATH
+RUN apk --no-cache add \
+        unzip \
+        py3-crcmod \
+        bash \
+        libc6-compat \
+        openssh-client \
+        gnupg \
+    && curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz && \
+    tar xzf google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz && \
+    rm google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz && \
+    gcloud config set core/disable_usage_reporting true && \
+    gcloud config set component_manager/disable_update_check true && \
+    gcloud config set metrics/environment github_docker_image && \
+    gcloud --version && \
+    ## Packer + Vault + Kubectl
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin && \
+    curl https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip  -o /tmp/packer.zip && \
+    curl https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip -o /tmp/vault.zip && \
+    cd /tmp && unzip '*.zip' && \
+    mv packer vault /usr/local/bin && rm -rf /tmp/* && \
+    pip install yamllint pylint
