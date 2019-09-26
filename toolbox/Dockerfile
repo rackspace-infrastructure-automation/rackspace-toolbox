@@ -25,12 +25,6 @@ RUN tfenv install 0.11.4
 
 RUN tfenv use 0.11.8
 
-# scripts from toolbox
-COPY ./bin/* /var/opt/rackspace/bin/
-RUN ln -s /var/opt/rackspace/bin/* /usr/local/bin/
-WORKDIR /rackspace
-
-
 # Google SDK
 # https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/alpine/Dockerfile
 ARG CLOUD_SDK_VERSION="264.0.0"
@@ -61,3 +55,9 @@ RUN apk --no-cache add \
     cd /tmp && unzip '*.zip' && \
     mv packer vault /usr/local/bin && rm -rf /tmp/* && \
     pip install yamllint pylint
+
+
+# scripts from toolbox
+COPY ./bin/* /var/opt/rackspace/bin/
+RUN ln -s /var/opt/rackspace/bin/* /usr/local/bin/
+WORKDIR /rackspace
