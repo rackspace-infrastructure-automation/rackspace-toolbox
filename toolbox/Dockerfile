@@ -22,6 +22,8 @@ RUN tfenv install 0.11.11
 RUN tfenv install 0.11.8
 RUN tfenv install 0.11.7
 RUN tfenv install 0.11.4
+#MGCP
+RUN tfenv install 0.12.9  
 
 RUN tfenv use 0.11.8
 
@@ -33,8 +35,6 @@ ARG CLOUD_SDK_VERSION="264.0.0"
 ARG PACKER_VERSION="1.4.3"
 ARG VAULT_VERSION="1.2.3"
 ARG KUBECTL_VERSION="v1.16.0"
-
-RUN tfenv install 0.12.9
 
 ENV CLOUD_SDK_VERSION=$CLOUD_SDK_VERSION
 ENV PATH /google-cloud-sdk/bin:$PATH
