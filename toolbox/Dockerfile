@@ -25,12 +25,16 @@ RUN tfenv install 0.11.4
 
 RUN tfenv use 0.11.8
 
+
+
 # Google SDK
 # https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/alpine/Dockerfile
 ARG CLOUD_SDK_VERSION="264.0.0"
 ARG PACKER_VERSION="1.4.3"
 ARG VAULT_VERSION="1.2.3"
 ARG KUBECTL_VERSION="v1.16.0"
+
+RUN tfenv install 0.12.9
 
 ENV CLOUD_SDK_VERSION=$CLOUD_SDK_VERSION
 ENV PATH /google-cloud-sdk/bin:$PATH
