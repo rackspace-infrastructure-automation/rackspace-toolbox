@@ -1,7 +1,10 @@
 #!/usr/bin/env sh
 set -eu -o pipefail
 
-echo "Rackspace Toolbox - 1.7.5"
+mkdir -p /tmp/artifacts/
+ALL_OUTPUT="/tmp/artifacts/terraform_all_outputs.log"
+
+echo "Rackspace Toolbox - 1.7.6" | tee -a "$ALL_OUTPUT"
 
 check_old() {
   local fake_hostname='github.com.original.invalid'
@@ -40,8 +43,8 @@ MODULES=''
 if [ -d "$MODULES_DIR" ]; then
   MODULES=$(find "$MODULES_DIR"/* -maxdepth 0 -type d -exec basename '{}' \; | sort -n)
 
-  echo "Modules found: "
-  echo $MODULES
+  echo "Modules found:" | tee -a "$ALL_OUTPUT"
+  echo $MODULES | tee -a "$ALL_OUTPUT"
 fi
 
 find_changed_layers() {
@@ -66,16 +69,16 @@ if [ -d "$LAYERS_DIR" ]; then
   [ -z "$TF_STATE_BUCKET" ] && echo "Missing \$TF_STATE_BUCKET" && exit 1
   [ -z "$TF_STATE_REGION" ] && echo "Missing \$TF_STATE_REGION" && exit 1
 
-  echo "Using bucket for state backend: $TF_STATE_BUCKET"
+  echo "Using bucket for state backend: $TF_STATE_BUCKET in $TF_STATE_REGION" | tee -a "$ALL_OUTPUT"
 
   LAYERS=$(find "$LAYERS_DIR"/* -maxdepth 0 -type d -exec basename '{}' \; | sort -n)
 
-  echo "Layers found: "
-  echo $LAYERS
+  echo "Layers found:" | tee -a "$ALL_OUTPUT"
+  echo $LAYERS | tee -a "$ALL_OUTPUT"
 
   # needs AWS credentials in order to look for tf-applied-revision.sha
   if (aws configure list | grep access_key | grep -q '<not set>'); then
-    echo "> Fetching credentials"
+    echo "> Fetching credentials" | tee -a "$ALL_OUTPUT"
     source pull-aws-creds.sh
   fi
 
@@ -97,8 +100,8 @@ if [ -d "$LAYERS_DIR" ]; then
     fi
   fi
 
-  echo "Changed layers: "
-  echo $CHANGED_LAYERS
+  echo "Changed layers:" | tee -a "$ALL_OUTPUT"
+  echo $CHANGED_LAYERS | tee -a "$ALL_OUTPUT"
 fi
 
 # CircleCI fails the build if none of the files mentioned in persist_to_workspace exist.

@@ -158,5 +158,14 @@ No changes. Infrastructure is up-to-date.")
   TF_STATE_REGION='le-region'
   plan.sh
 
-  diff /tmp/artifacts/terraform_all_outputs.log <(echo "> No changed layers to plan.")
+  diff /tmp/artifacts/terraform_all_outputs.log <(echo \
+"Rackspace Toolbox - 1.7.6
+Modules found:
+shared_code
+Using bucket for state backend: le-bucket in le-region
+Layers found:
+applicable base_network route53_internal_zone
+Changed layers:
+
+> No changed layers to plan.")
 }
