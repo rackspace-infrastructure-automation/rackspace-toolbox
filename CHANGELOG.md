@@ -1,5 +1,9 @@
 # rackspace-toolbox Changelog
 
+## [1.7.6](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.6) (Oct 23, 2019)
+
+Output state bucket to artifacts.
+
 ## [1.7.5](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.5) (Mar 12, 2019)
 
 Updated to pre-install the most recent stable releases of terraform.
