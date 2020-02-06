@@ -4,7 +4,7 @@ set -eu -o pipefail
 mkdir -p /tmp/artifacts/
 ALL_OUTPUT="/tmp/artifacts/terraform_all_outputs.log"
 
-echo "Rackspace Toolbox - 1.7.6" | tee -a "$ALL_OUTPUT"
+echo "Rackspace Toolbox - 1.7.7" | tee -a "$ALL_OUTPUT"
 
 check_old() {
   local fake_hostname='github.com.original.invalid'

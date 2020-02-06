@@ -159,7 +159,7 @@ No changes. Infrastructure is up-to-date.")
   plan.sh
 
   diff /tmp/artifacts/terraform_all_outputs.log <(echo \
-"Rackspace Toolbox - 1.7.6
+"Rackspace Toolbox - 1.7.7
 Modules found:
 shared_code
 Using bucket for state backend: le-bucket in le-region

@@ -1,5 +1,10 @@
 # rackspace-toolbox Changelog
 
+## [1.7.7](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.7) (Feb 6, 2020)
+
+Update to pre-install several stable releases of terraform v0.12.x.
+Update to latest release of tuvok.
+
 ## [1.7.6](https://github.com/rackspace-infrastructure-automation/rackspace-toolbox/releases/tag/1.7.6) (Oct 23, 2019)
 
 Output state bucket to artifacts.
