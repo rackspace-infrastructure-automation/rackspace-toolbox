@@ -1,27 +1,24 @@
-version: 2
+version: 2.1
 jobs:
   build_toolbox:
-    working_directory: /rackspace-toolbox
-    docker:
-      - image: docker:18.06.1-ce-git
+    executor: gcp-gcr/default
     steps:
       - checkout
-      - setup_remote_docker
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --no-cache py-pip
+      - gcp-gcr/gcr-auth
       - deploy:
           name: Build rackspace-toolbox containers
           command: |
-            docker build -t rackautomation/rackspace-toolbox:$CIRCLE_SHA1 ./toolbox/
             docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker build -t rackautomation/rackspace-toolbox:$CIRCLE_SHA1 ./toolbox/
             docker push rackautomation/rackspace-toolbox:$CIRCLE_SHA1
             ./scripts/tag_release $CIRCLE_SHA1 "branch_${CIRCLE_BRANCH}"
 
   test_toolbox:
     docker:
       - image: rackautomation/rackspace-toolbox:$CIRCLE_SHA1
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
     steps:
       - checkout
       - run:
@@ -39,11 +36,10 @@ jobs:
             time bats -f '@smoke' ./tests
 
   tag_master:
-    docker:
-      - image: docker:18.06.1-ce-git
+    executor: gcp-gcr/default
     steps:
       - checkout
-      - setup_remote_docker
+      - gcp-gcr/gcr-auth
       - deploy:
           name: tag as master
           command: |
@@ -51,16 +47,18 @@ jobs:
             ./scripts/tag_release $CIRCLE_SHA1 master
 
   tag_release:
-    docker:
-      - image: docker:18.06.1-ce-git
+    executor: gcp-gcr/default
     steps:
       - checkout
-      - setup_remote_docker
+      - gcp-gcr/gcr-auth
       - deploy:
           name: tag an official release
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             ./scripts/tag_release $CIRCLE_SHA1 $CIRCLE_TAG
+
+orbs:
+  gcp-gcr: circleci/gcp-gcr@0.9.0
 
 workflows:
   version: 2
