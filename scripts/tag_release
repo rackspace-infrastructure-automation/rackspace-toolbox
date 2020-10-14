@@ -3,9 +3,9 @@ set -eu
 
 tag_and_push() {
   docker tag "rackautomation/rackspace-toolbox:$GIT_SHA" "rackautomation/rackspace-toolbox:$1"
-  docker tag "rackautomation/rackspace-toolbox:$GIT_SHA" "gcr.io/rs-public-containers-dev/rackspace-toolbox:$1"
+  docker tag "rackautomation/rackspace-toolbox:$GIT_SHA" "gcr.io/rs-public-containers/rackspace-toolbox:$1"
   docker push "rackautomation/rackspace-toolbox:$1"
-  docker push "gcr.io/rs-public-containers-dev/rackspace-toolbox:$1"
+  docker push "gcr.io/rs-public-containers/rackspace-toolbox:$1"
 }
 
 GIT_SHA="$1"

@@ -25,13 +25,21 @@ function teardown() {
   diff <(echo "$output") <(echo \
 'pull rackautomation/rackspace-toolbox:fdfdfd
 tag rackautomation/rackspace-toolbox:fdfdfd rackautomation/rackspace-toolbox:latest
+tag rackautomation/rackspace-toolbox:fdfdfd gcr.io/rs-public-containers/rackspace-toolbox:latest
 push rackautomation/rackspace-toolbox:latest
+push gcr.io/rs-public-containers/rackspace-toolbox:latest
 tag rackautomation/rackspace-toolbox:fdfdfd rackautomation/rackspace-toolbox:11.22.33
+tag rackautomation/rackspace-toolbox:fdfdfd gcr.io/rs-public-containers/rackspace-toolbox:11.22.33
 push rackautomation/rackspace-toolbox:11.22.33
+push gcr.io/rs-public-containers/rackspace-toolbox:11.22.33
 tag rackautomation/rackspace-toolbox:fdfdfd rackautomation/rackspace-toolbox:11.22
+tag rackautomation/rackspace-toolbox:fdfdfd gcr.io/rs-public-containers/rackspace-toolbox:11.22
 push rackautomation/rackspace-toolbox:11.22
+push gcr.io/rs-public-containers/rackspace-toolbox:11.22
 tag rackautomation/rackspace-toolbox:fdfdfd rackautomation/rackspace-toolbox:11
-push rackautomation/rackspace-toolbox:11')
+tag rackautomation/rackspace-toolbox:fdfdfd gcr.io/rs-public-containers/rackspace-toolbox:11
+push rackautomation/rackspace-toolbox:11
+push gcr.io/rs-public-containers/rackspace-toolbox:11')
 }
 
 @test "requires two args" {
@@ -50,7 +58,11 @@ push rackautomation/rackspace-toolbox:11')
   diff <(echo "$output") <(echo \
 'pull rackautomation/rackspace-toolbox:fdfdfd
 tag rackautomation/rackspace-toolbox:fdfdfd rackautomation/rackspace-toolbox:latest
+tag rackautomation/rackspace-toolbox:fdfdfd gcr.io/rs-public-containers/rackspace-toolbox:latest
 push rackautomation/rackspace-toolbox:latest
+push gcr.io/rs-public-containers/rackspace-toolbox:latest
 tag rackautomation/rackspace-toolbox:fdfdfd rackautomation/rackspace-toolbox:branch_king_test_z
-push rackautomation/rackspace-toolbox:branch_king_test_z')
+tag rackautomation/rackspace-toolbox:fdfdfd gcr.io/rs-public-containers/rackspace-toolbox:branch_king_test_z
+push rackautomation/rackspace-toolbox:branch_king_test_z
+push gcr.io/rs-public-containers/rackspace-toolbox:branch_king_test_z')
 }
