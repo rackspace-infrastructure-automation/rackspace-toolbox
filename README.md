@@ -1,6 +1,6 @@
 # rackspace-toolbox
 
-This is a docker image published at [Docker Hub](https://hub.docker.com/r/rackautomation/rackspace-toolbox/). It's part of Rackspace's [Managed Infrastructure as Code](https://manage.rackspace.com/aws/docs/product-guide/miac.html) offering.
+This is a docker image published to GCR (gcr.io/rs-public-containers/rackspace-toolbox). It's part of Rackspace's [Managed Infrastructure as Code](https://manage.rackspace.com/aws/docs/product-guide/miac.html) offering.
 
 [![CircleCI](https://circleci.com/gh/rackspace-infrastructure-automation/rackspace-toolbox.svg?style=svg&circle-token=f589f8bc84999fb48fe819fa553e50e7594654d0)](https://circleci.com/gh/rackspace-infrastructure-automation/rackspace-toolbox)
 
