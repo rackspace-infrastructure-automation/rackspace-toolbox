@@ -22,6 +22,10 @@ if [ ! -r "$KEY_FILE" ]; then
 fi
 
 set -o pipefail
+
+echo >&2 "> Found key file: $KEY_FILE, ensuring it is in PEM format"
+ssh-keygen -p -N '' -m pem -f $KEY_FILE
+
 FINGERPRINT=$(ssh-keygen -E md5 -lf "$KEY_FILE" | cut -f2 -d' ')
 REPO_NAME=${REPO_NAME:-$(git config --get remote.origin.url | sed -e 's/^git@github[.]com://' -e 's/^[^\/]*\///' -e 's/[.]git$//')}
 TIME=$(date +%s)
