@@ -16,6 +16,7 @@ RUN pip install git+https://github.com/rackerlabs/tuvok.git@$TUVOK_VERSION
 # recent terraform versions
 RUN tfenv install 0.12.20
 RUN tfenv install 0.12.17
+RUN tfenv install 0.11.14
 RUN tfenv install 0.11.13
 RUN tfenv install 0.11.11
 RUN tfenv install 0.11.8

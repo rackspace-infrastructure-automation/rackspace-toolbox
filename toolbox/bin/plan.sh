@@ -38,7 +38,7 @@ for LAYER in $CHANGED_LAYERS; do
      | tee -a "$ALL_OUTPUT" "$LAYER_OUTPUT"
 
   # cache .terraform during the plan
-  tar -czf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz" .terraform | tee -a "$ALL_OUTPUT" "$LAYER_OUTPUT"
+  tar -czf "$WORKSPACE_DIR/.terraform.$LAYER.tar.gz" .terraform .terraform.lock.hcl | tee -a "$ALL_OUTPUT" "$LAYER_OUTPUT"
 
 
   TEMP_PLAN_LOG=$(mktemp)
