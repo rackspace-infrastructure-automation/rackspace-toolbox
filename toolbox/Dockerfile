@@ -18,8 +18,10 @@ RUN tfenv install 0.14.11
 RUN tfenv install 0.13.7
 RUN tfenv install 0.12.31
 RUN tfenv install 0.11.14
+RUN tfenv install 0.11.8
+RUN tfenv install 0.11.7
 
-RUN tfenv use 0.11.14
+RUN tfenv use 0.11.8
 
 # scripts from toolbox
 COPY ./bin/* /var/opt/rackspace/bin/
