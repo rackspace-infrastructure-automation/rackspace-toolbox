@@ -1,7 +1,7 @@
 FROM python:3-alpine
 
 # versions to install
-ARG TUVOK_VERSION=v0.1.3
+ARG TUVOK_VERSION=v0.1.4
 
 # pre-reqs for toolbox & tuvok
 RUN apk --update add bash git openssh openssl curl wget py-pip jq
