@@ -1,4 +1,4 @@
-# rackspace-toolbox
+# rackspace-toolbox.
 
 This is a docker image published to GCR (gcr.io/rs-public-containers/rackspace-toolbox). It's part of Rackspace's [Managed Infrastructure as Code](https://manage.rackspace.com/aws/docs/product-guide/miac.html) offering.
 
@@ -9,7 +9,7 @@ Image tags:
 - `master` has the latest stable version
 - `branch_{branch_name}` and git sha for newly created branches (useful for trying out code from toolbox changes in development)
 
-# Running tests locally
+# Running tests locally.
 
 All but the smoke test should pass locally by running `./scripts/test-local`.
 
